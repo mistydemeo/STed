@@ -20,7 +20,7 @@ AC_PROG_CC
 
 dnl Set of available languages.
 ALL_LINGUAS="ja"
-AM_GNU_GETTEXT
+AM_GNU_GETTEXT(external)
 AC_CHECK_FUNC(gettext,,AC_CHECK_LIB(intl,gettext))
 
 dnl Misc definition
