@@ -2,6 +2,7 @@
 /config.h
 /config.log
 /config.status
+*.a
 *.o
 Makefile
 **/**/.deps
