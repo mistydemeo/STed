@@ -1,0 +1,120 @@
+       TiMidity++ でトレース表示等を行うための専用プラグイン
+
+ このファイルは、TiMidity++ を使用して、STed のトラックエディット時に
+ 演奏のトレース・一時停止・音色のチェックなどを行うための専用プラグイン
+ です。
+
+  TiMidity++ は、
+
+   http://www.goice.co.jp/member/mo/timidity/
+
+ にて配布されています。
+
+--------------------------------
+INSTALL:
+
+ TiMidity++ にこのインタフェイスを組み込むには、ソースや設定ファイルを
+ 書き換えて直接実行バイナリの中に組み込んでしまう方法と、timidity++ の
+ ダイナミックインタフェイス機能を利用して外部インタフェイスとして使用する
+ 方法があります。
+
+ 直接 TiMidity++ に機能を埋め込む場合は、以下の通り TiMidity++ を再構築
+ してください:
+
+
+ 1. TiMidity++ のソースに同梱のパッチを当てます。TiMidity++ のバージョンに
+    よっては、パッチが当たらない場合があります。
+
+ 2. ./configure (your options)
+    必ず何らかのインタフェイスを有効にしておいてください。
+
+ 3. ソースの一部を修正:
+
+  3.1 interface.h の #undef IA_STED を #define IA_STED とする
+  3.2 interface/Makefile の #STED_OBJ 付近の # を取り、有効にする
+  3.3 interface/Makefile の CFLAGS に rcddef.h のある場所を追加
+      (あるいは rcddef.h を interface/ にコピーする)
+
+ 4. make ; make install
+
+
+ ダイナミックインタフェイスを使う場合は以下の通りです。この場合、
+ TiMidity++ 全体を再構築する必要がありません:
+
+ 1. 上記と同様にパッチ当て、./configure を行います
+
+ 2. ソースの一部を修正:
+
+  2.1 interface/Makefile の dynamic_target に interface_S.$(so) を追加する
+  2.2 interface/Makefile の CFLAGS に rcddef.h のある場所を追加
+      (あるいは rcddef.h を interface/ にコピーする)
+
+ 3. 次のようにしてインタフェイスのダイナミックライブラリを作成する
+
+     % gcc -I ../timidity -I ../ -I ../utils -I ../libarc -fpic \
+       -o sted_c.o -c sted_c.c
+     % ld -Bshareable -o interface_S.so sted_c.o
+
+ 4. TiMidity++ のライブラリディレクトリに、出来た interface_S.so をコピー
+    する
+
+     # cp interface_S.so /usr/local/lib/timidity/
+     # cp $(STed_root)/interface_S.txt /usr/local/lib/timidity/
+
+
+
+ 以上のようにすると TiMidity++ に STed とのインタフェイスが追加されます。
+ TiMidity++ を -h オプション付で起動したとき、
+
+  Supported dynamic load interfaces (/usr/local/lib/timidity):
+    -iS     STed controller
+
+ のようなメッセージが表示されるはずです。出なかった場合は、構築に
+ 失敗している可能性がありますので、もう一度 TiMidity++ を構築して
+ ください。
+
+
+--------------------------------
+CONFIGURATION:
+
+ 実際にこの timidity++ を STed の player として使用する場合は、
+ sted2.cnf の #player を
+
+   #player=3,timidity -iSt -s22.05 -ERC
+
+ のように、フラグに 3 (rcd capable, sted controllable)、オプションに
+ -iSt を追加 として設定してください。
+
+
+ ちなみに上記の timidity のオプションは
+
+  サンプルレート : 22.05kHz
+  コーラス・リバーブのエフェクト : OFF
+
+ という意味です。マシンパワーに応じて変更してみてください。
+
+--------------------------------
+USAGE:
+
+ .トラックエディット画面で演奏を行っている時に [かな] 相当キーを
+  押すと、演奏に合わせてカーソルが現在の演奏位置に移動するようになります。
+ 
+ .[XF3] 相当キーで一時停止が出来ます。
+
+ .音色選択ウィンドウが出ている時に [UNDO] 相当キーを押すと、C4 の音を
+  出して音色のチェックが出来ます。
+  (演奏の一時停止時には無効)
+
+--------------------------------
+DISCLIMER:
+
+This software is provided as-is.  The author can not be held
+liable for any damage that might arise from the use of this
+software.  Use it at your own risk.
+
+--------------------------------
+
+このインタフェイスは、ほぼ全て木下浩介さん(kino@krhm.jvc-victor.co.jp)
+によって作られました。本ドキュメントは 長野大介(breeze.nagano@nifty.ne.jp)
+が書きました。
+

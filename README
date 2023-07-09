@@ -1,0 +1,94 @@
+STed2 for UNIX
+==============
+
+ The "STed2" is the high-performance Music Composer System. It had been
+working on X680x0 old Japanese personal workstation. STed2 means
+perhaps "STep EDitor".  The STed2 has originally been developed by
+Mr. Takayuki "TURBO" Toda.
+
+
+   Mr. Takayuki Toda has dead on Dec. 4. 1997. I express my regret
+                       over the his death.
+                      May he rest in peace.
+
+ Through many volunteer's good office the source code of the STed2 has
+been opened. Since I am an user of original STed2 (working on X680x0)
+and regret that development is discontinued forever, I decide to port
+the STed2 to UNIX & X environment.
+
+
+USAGE
+=====
+
+ To start STed2, install 'sted2', 'sted2.cnf', 'sted2.fon' in the same
+path (or 'DEFAULT_PATH' in Makefile) and type:
+
+ % sted2
+
+If environment variable 'DISPLAY' is set, X version of STed2 will
+raise, or ncurses version will came up. It is same as emacs.
+
+
+CONFIGURATION
+=============
+
+ 'sted2.cnf' is runtime configuration file. It contains many
+configuration features but it all commented by Japanese :-<
+ To use STed2 anyway, configure the following features:
+
+ #PLAYER= flag, (path of external RCP/SMF player)
+
+  External MIDI player. If the player can handle only SMF, set the
+bit-0 of flag 0.
+
+ #MIDI_PORT= (path of device name of MIDI-IN)
+
+  MIDI-IN device name. If you want to use MIDI-IN as input method of
+STed2, specify the path of device name.
+  Although Serial ports (/dev/ttyS0 or else) can also be specified,
+STed2 never sets the configuration of serial ports (speed , flow, etc). 
+So you should set it manually before start STed2.
+
+ #KEY_??  = (key name)
+
+  In X version, the keyboard arrange can configurable. The
+configurable keys are following:
+
+  #KEY_XF1 - #KEY_XF5
+  #KEY_KANA, #KEY_KIGO, #KEY_TOROKU
+  #KEY_INS, #KEY_DEL, #KEY_HOME, #KEY_UNDO, #KEY_RUP, #KEY_RDOWN
+  #KEY_OPT1, KEY_OPT2
+
+  All names are introduced from original X68k version.
+  (key name) is the KeySym strings.
+
+
+DISCLILMER
+==========
+
+This software is provided as-is.  The author can not be held liable
+for any damage that might arise from the use of this software.  Use it
+at your own risk.
+
+This distribution cannot be GPL2ed. Because the original author has
+been died and any permission of changing the distribution policy will
+not be given.
+
+
+AVAILABILITY
+============
+
+ The latest version of STed2 for X will be available at:
+
+   http://member.nifty.ne.jp/Breeze/linux/STed/index.html
+
+
+AUTHORS
+=======
+
+ Original "STed2 for X680x0" author:
+  TURBO (Takayuki Toda)
+
+ Porting to X:
+  Daisuke Nagano <breeze.nagano@nifty.ne.jp>
+   http://member.nifty.ne.jp/Breeze/index.html

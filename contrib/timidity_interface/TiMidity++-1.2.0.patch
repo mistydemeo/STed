@@ -1,0 +1,1029 @@
+diff -ru TiMidity++-1.2.0/interface/Makefile.in TiMidity.new/interface/Makefile.in
+--- TiMidity++-1.2.0/interface/Makefile.in	Thu Jan 21 01:59:24 1999
++++ TiMidity.new/interface/Makefile.in	Thu Jan 21 11:52:39 1999
+@@ -196,6 +196,9 @@
+ @ENABLE_GTK_TRUE@	gtk_i.o \
+ @ENABLE_GTK_TRUE@	gtk_p.o
+ 
++#STED_OBJS= \
++#	sted_c.o
++
+ @ENABLE_WRD_TRUE@WRD_OBJS = \
+ @ENABLE_WRD_TRUE@	wrdt_x.o \
+ @ENABLE_WRD_TRUE@	x_wrdwindow.o \
+@@ -217,6 +220,7 @@
+ 	$(XAW_OBJS) \
+ 	$(XSKIN_OBJS) \
+ 	$(GTK_OBJS) \
++	$(STED_OBJS) \
+ 	$(WRD_OBJS) \
+ 	$(DYNAMIC_OBJS) \
+ 	$(SOUND_SPEC_OBJS)
+@@ -673,6 +677,9 @@
+ 
+ @NEEDDLOPEN_TRUE@interface_g.$(so): gtk_c.$(so) gtk_i.$(so) gtk_p.$(so)
+ @NEEDDLOPEN_TRUE@	$(SHLD) -o $@ gtk_c.$(so) gtk_i.$(so) gtk_p.$(so) $(g_so_libs)
++
++@NEEDDLOPEN_TRUE@interface_S.$(so): sted_c.$(so)
++@NEEDDLOPEN_TRUE@	$(SHLD) -o $@ sted_c.$(so)
+ 
+ @NEEDDLOPEN_TRUE@clean-compile:
+ @NEEDDLOPEN_TRUE@	-rm -f *.$(so)
+diff -ru TiMidity++-1.2.0/interface/sted_c.c TiMidity.new/interface/sted_c.c
+--- TiMidity++-1.2.0/interface/sted_c.c	Fri Jan 22 12:13:14 1999
++++ TiMidity.new/interface/sted_c.c	Fri Jan 22 14:06:38 1999
+@@ -0,0 +1,520 @@
++/*
++  sted interface
++   written by KINOSHITA Kosuke (kino@krhm.jvc-victor.co.jp)
++   and NAGANO Daisuke (breeze.nagano@nifty.ne.jp)
++
++                                                Dec.16.1998
++ */
++
++#ifdef HAVE_CONFIG_H
++#include "config.h"
++#endif /* HAVE_CONFIG_H */
++
++#include <stdio.h>
++#include <stdlib.h>
++#include <stdarg.h>
++#include <unistd.h>
++#include <sys/ioctl.h>
++#include <sys/shm.h>
++#ifndef NO_STRING_H
++#include <string.h>
++#else
++#include <strings.h>
++#endif
++
++#include "timidity.h"
++#include "url.h"
++#include "instrum.h"
++#include "playmidi.h"
++#include "controls.h"
++#include "timer.h"
++#include "output.h"
++#include "common.h"
++#include "rcddef.h"
++
++static int ctl_open(int using_stdin, int using_stdout);
++static void ctl_close(void);
++static void ctl_pass_playing_list(int number_of_files, char *list_of_files[]);
++static int ctl_read(int32 *valp);
++static int cmsg(int type, int verbosity_level, char *fmt, ...);
++static void ctl_event(CtlEvent *e);
++
++static int ctl_blocking_read(int32 *valp);
++
++struct mix_out_bank {
++  unsigned char   cmd;    /* 0xb0 + ch */
++  unsigned char   x00;    /* always 0 */
++  unsigned char   msb;    /* bank msb */
++  unsigned char   x20;    /* always 0x20 */
++  unsigned char   lsb;    /* bank lsb */
++  unsigned char   xff;    /* always 0xff (end) */
++};
++struct mix_out_prog {
++  unsigned char   cmd;    /* 0xc0 + ch */
++  unsigned char   prog;   /* program */
++  unsigned char   xff;    /* always 0xff (end) */
++};
++struct mix_out_note {
++  unsigned char   cmd;    /* 0x90 + ch */
++  unsigned char   note;   /* note */
++  unsigned char   velo;   /* velocity */
++  unsigned char   xff;    /* always 0xff (end) */
++};
++union mix_out {
++  unsigned char   u[16];
++  struct mix_out_bank     bank;
++  struct mix_out_prog     prog;
++  struct mix_out_note     note;
++};
++
++#undef DEBUG 1
++#ifdef DEBUG
++static FILE *fp;
++#endif /* DEBUG */
++
++#define ctl sted_control_mode
++
++ControlMode ctl=
++{
++  "STed interface", 'S',
++  0,0,0,
++  ctl_open,
++  ctl_close,
++  ctl_pass_playing_list,
++  ctl_read,
++  cmsg,
++  ctl_event
++};
++
++static int shmid, act=0;
++static struct RCD_HEAD *rcd;
++static char *data_buffer=NULL;
++static int playing=0;
++static double start_time;
++extern int32 current_sample;
++
++typedef struct _URL_mem {
++  char  common[sizeof(struct _URL)];
++  char *memory;
++  long  memsiz;
++  long  mempos;
++  int   autofree;
++} URL_mem;
++static struct URL_module URL_module_shm;
++
++static int url_shm_name_check(char *name) {
++  if(strncmp(name, "shm:", 4) == 0){
++    ((URL_mem *)&URL_module_shm)->memsiz = rcd->totalcount;
++    return 1;
++  }
++  return 0;
++}
++
++static URL url_shm_open(char *dummy) {
++  URL_mem *url;
++  int i;
++  char *p;
++  
++  i=rcd->act;
++  rcd->act=2;
++  
++  p = (char *)rcd+sizeof(struct RCD_HEAD);
++
++  memcpy( data_buffer, p, rcd->totalcount );
++  url = (URL_mem *)url_mem_open(data_buffer, rcd->totalcount, 0);
++  
++  rcd->act=i;
++  return((URL)url);
++}
++
++static int ctl_open(int using_stdin, int using_stdout) {
++  char	*p;
++  
++#ifdef DEBUG
++  fp = fopen("/dev/console", "w");
++# if DEBUG > 1
++  ctl.verbosity = VERB_DEBUG_SILLY;
++# endif /* DEBUG */
++#endif /* DEBUG */
++  
++  if(using_stdin || using_stdout) {
++    fprintf(stderr, "Must be launched by STed\n");
++    return -1;
++  }
++  if((p = getenv("STED_RCD_SHMID")) == NULL) {
++    fprintf(stderr, "Must be launched by STed\n");
++    return -1;
++  }
++  shmid = atoi(p);
++  rcd = (struct RCD_HEAD *)shmat(shmid,0,0);
++  if(rcd == NULL) {
++    fprintf(stderr, "Can't locate shared memory\n");
++    return -1;
++  }
++
++#ifdef HAVE_SAFE_MALLOC
++  data_buffer = (char *)safe_malloc(sizeof(char)*DATA_ADR_SIZE);
++#else
++  data_buffer = (char *)malloc(sizeof(char)*DATA_ADR_SIZE);
++  if ( data_buffer == NULL ) {
++    fprintf(stderr, "Cannot allocate memory\n" );
++    return -1;
++  }
++#endif /* HAVE_SAFE_MALLOC */
++
++  URL_module_shm.type = URL_mem_t;
++  URL_module_shm.name_check = url_shm_name_check;
++  URL_module_shm.url_init = NULL;
++  URL_module_shm.url_open = url_shm_open;
++  URL_module_shm.chain = NULL;
++  url_add_module(&URL_module_shm);
++  ctl.opened=1;
++
++  return 0;
++}
++
++static void ctl_close(void) {
++  ctl.opened=0;
++}
++
++static void ctl_pass_playing_list(int number_of_files, char *list_of_files[]) {
++  int command;
++  
++  command = RC_LOAD_FILE;
++
++  for(;;){
++    if(command == RC_LOAD_FILE){
++      command = play_midi_file(list_of_files[0]);
++    } else {
++      switch(command){
++      case RC_TUNE_END:
++      case RC_ERROR:
++	act=0;
++	rcd->act=0;
++	break;
++      case RC_QUIT:
++	return;
++	break;
++      }
++      command = ctl_blocking_read(NULL);
++    }
++  }
++}
++
++static void play_mix_out( void ) {
++  static int bank, prog;
++  union mix_out buf;
++  MidiEvent ev;
++  int i;
++  double cur = get_current_calender_time();
++
++
++  for(i = 0; i < 16; i++) {
++    buf.u[i] = rcd->MIDI_req[i];
++#ifdef DEBUG
++    fprintf(fp, "%02x ", buf.u[i]);
++#endif /* DEBUG */
++    if(buf.u[i] == 0xff)
++      break;
++  }
++  if ( buf.u[0] < 0x80 ) {		/* unknown */
++#ifdef DEBUG
++    fprintf(fp, "unknown\n");
++#endif /* DEBUG */
++  }
++  else if ( buf.u[0] < 0x90 ) {		/* note off */
++#ifdef DEBUG
++    fprintf(fp, "note off\n");
++#endif /* DEBUG */
++  }
++  else if( buf.u[0] < 0xa0 ) {		/* note on */
++    int ch, note, velo;
++
++    ev.channel = ch = buf.note.cmd - 0x90;
++    ev.a = note = buf.note.note;
++    ev.b = velo = buf.note.velo;
++    if(playing == 2)
++      ev.time = (int32)((cur - start_time) * play_mode->rate);
++    else
++      ev.time = current_sample;
++    if ( velo ) {
++      ev.type = ME_NOTEON;
++      if(ISDRUMCHANNEL(ch)) {
++	if(!(drumset[bank]->tone[prog].instrument))
++	  drumset[bank]->tone[prog].instrument = MAGIC_LOAD_INSTRUMENT;
++      }
++      else {
++	if(!(tonebank[bank]->tone[prog].instrument))
++	  tonebank[bank]->tone[prog].instrument = MAGIC_LOAD_INSTRUMENT;
++      }
++    }
++    else {
++      ev.type = ME_NOTEOFF;
++    }
++    play_mode->play_event(&ev);
++#ifdef DEBUG
++    if(buf.note.velo)
++      fprintf(fp, "mix_out note on at %ld\n", ev.time);
++    else
++      fprintf(fp, "mix_out note off at %ld\n", ev.time);
++#endif /* DEBUG */
++  }
++  else if(buf.u[0] < 0xb0){		/* unknown */
++#ifdef DEBUG
++    fprintf(fp, "unknown\n");
++#endif /* DEBUG */
++  }
++  else if(buf.u[0] < 0xc0){		/* bank */
++    if(playing == 2)
++      ev.time = (int32)((cur - start_time) * play_mode->rate);
++    else
++      ev.time = current_sample;
++    ev.type = ME_TONE_BANK_MSB;
++    ev.channel = buf.bank.cmd - 0xb0;
++    ev.a = bank = buf.bank.msb;
++    play_mode->play_event(&ev);
++    ev.type = ME_TONE_BANK_LSB;
++    ev.a = buf.bank.lsb;
++    play_mode->play_event(&ev);
++#ifdef DEBUG
++    fprintf(fp, "mix_out bank at %ld\n", ev.time);
++#endif /* DEBUG */
++  }
++  else if(buf.u[0] < 0xd0){		/* program change */
++    if(playing == 2)
++      ev.time = (int32)((cur - start_time) * play_mode->rate);
++    else
++      ev.time = current_sample;
++    ev.type = ME_PROGRAM;
++    ev.channel = buf.prog.cmd - 0xc0;
++    ev.a = prog = buf.prog.prog;
++    play_mode->play_event(&ev);
++#ifdef DEBUG
++    fprintf(fp, "mix_out program at %ld\n", ev.time);
++#endif /* DEBUG */
++  }
++  else if(buf.u[0] < 0xe0){		/* channel pressure */
++#ifdef DEBUG
++    fprintf(fp, "channel pressure\n");
++#endif /* DEBUG */
++  }
++  else {
++    switch(buf.u[0]){
++#ifdef DEBUG
++      case 0xf0:			/* system exclusive */
++	fprintf(fp, "system exclusive\n");
++	break;
++      case 0xf1:			/* MIDI time-code quarter flame */
++	fprintf(fp, "MIDI time-code quarter flame\n");
++	break;
++      case 0xf2:			/* song position pointer */
++	fprintf(fp, "song position pointer\n");
++	break;
++      case 0xf3:			/* song select */
++	fprintf(fp, "song select\n");
++	break;
++      case 0xf6:			/* tune request */
++	fprintf(fp, "tune request\n");
++	break;
++      case 0xf8:			/* timing clock */
++	fprintf(fp, "timing clock\n");
++	break;
++      case 0xfa:			/* start */
++	fprintf(fp, "start\n");
++	break;
++      case 0xfb:			/* continue */
++	fprintf(fp, "continue\n");
++	break;
++      case 0xfc:			/* stop */
++	fprintf(fp, "stop\n");
++	break;
++      case 0xfe:			/* active sensing */
++	fprintf(fp, "active sensing\n");
++	break;
++#endif /* DEBUG */
++      case 0xff:			/* system reset */
++	if(playing == 2)
++	  playing = 0;
++#ifdef DEBUG
++	fprintf(fp, "system reset\n");
++#endif /* DEBUG */
++	break;
++      default:				/* unknown */
++#ifdef DEBUG
++	fprintf(fp, "unknown\n");
++#endif /* DEBUG */
++	break;
++    }
++  }
++}
++
++static int ctl_blocking_read(int32 *valp) {
++  char command[16] = { "" };
++  
++  /* checks status every 1 ms */
++  usleep(1000);
++
++  /* check STed status */
++  if(act != rcd->act){
++    if(rcd->act != 2)
++      act = rcd->act;
++    if(command[0] == '\0')
++      switch(act){
++	case 0:
++	  command[0] = 'S';
++	  break;
++	case 1:
++	  command[0] = 'P';
++	  break;
++      }
++  }
++
++  switch(command[0]){
++    case 'P':
++      return RC_LOAD_FILE;
++    case 'S':
++      return RC_NEXT;
++  }
++
++  if ( rcd->MIDI_avl ) {
++    if ( !playing ) {
++      current_sample = 0;
++      start_time = get_current_calender_time();
++      playing = 2;
++    }
++    rcd->MIDI_avl = 0;
++    play_mix_out();
++    return RC_NONE;
++  }
++#if 1
++  if(playing == 2) {
++    MidiEvent ev;
++    double cur = get_current_calender_time();
++
++    ev.time = (int32)((cur - start_time + 0.02) * play_mode->rate);
++    ev.type = ME_NONE;
++    play_mode->play_event(&ev);
++  }
++#else
++  {
++    MidiEvent ev;
++    double cur = get_current_calender_time();
++
++    if(playing == 2)
++      ev.time = (int32)((cur - start_time + 0.02) * play_mode->rate);
++    else
++      ev.time = current_sample;
++    ev.type = ME_NONE;
++    play_mode->play_event(&ev);
++  }
++#endif
++
++  return RC_NONE;
++}
++
++static int ctl_read(int32 *valp) {
++  static int sts=0;
++  
++  if(playing == 2) return RC_NONE;
++  switch(rcd->sts){
++  case 0:
++  case 1:
++    if(sts!=rcd->sts) {
++      sts = rcd->sts;
++      return RC_TOGGLE_PAUSE;
++    }
++  }
++
++  return(ctl_blocking_read(valp));
++}
++
++static int cmsg(int type, int verbosity_level, char *fmt, ...) {
++
++#ifdef DEBUG
++
++  va_list ap;
++
++#if DEBUG > 1
++#define	CONDITION  (type==CMSG_WARNING||type==CMSG_INFO)
++#else
++#define	CONDITION  (type==CMSG_WARNING)
++#endif
++  if ( CONDITION ) {
++    va_start(ap,fmt);
++    vfprintf(fp,fmt,ap);
++    fprintf(fp,"\n");
++    fflush(fp);
++    va_end(ap);
++  }
++
++#endif /* DEBUG */
++
++  return 0;
++}
++
++static void ctl_event(CtlEvent *e) {
++  int i;
++  MidiEvent ev;
++
++  switch(e->type){
++
++  case CTLE_PLAY_START:
++    playing = 1;
++    break;
++  case CTLE_PLAY_END:
++    playing = 0;
++    ev.time = 0;
++    ev.type = ME_ALL_NOTES_OFF;
++    for ( i=0 ; i<MAX_CHANNELS ; i++ ) {
++      ev.channel = i;
++      play_mode->play_event(&ev);
++    }
++    playing = 0;
++    ev.time = 0;
++    ev.type = ME_ALL_SOUNDS_OFF;
++    for ( i=0 ; i<MAX_CHANNELS ; i++ ) {
++      ev.channel = i;
++      play_mode->play_event(&ev);
++    }
++    break;
++  case CTLE_LOADING_DONE:
++    if(act == 2){
++      act = 1;
++      rcd->act = 1;
++    }
++    rcd->stepcount = 0;
++    for ( i=0 ; i<TRK_NUM ; i++ ) {
++      rcd->bar[(int)e->v1] = 0;
++      rcd->step[(int)e->v1] = 1;
++    }
++    break;
++
++  /*
++  case CTLE_BARSTEP:
++    rcd->bar[(int)e->v1] = (int)e->v2;
++    rcd->step[(int)e->v1] = (int)e->v3;
++    rcd->stepcount = (int)e->v4;
++    break;
++  */
++  case CTLE_BAR:
++    rcd->bar[(int)e->v1] = (int)e->v2 + ((int)e->v3<<7);
++    rcd->step[(int)e->v1] = 1;
++    rcd->stepcount = (int)e->v4;
++    break;
++  case CTLE_STEP:
++    rcd->step[(int)e->v1]++;
++    rcd->stepcount = (int)e->v2;
++    break;
++
++  default:
++    break;
++  }
++}
++
++/*
++ * interface_<id>_loader();
++ */
++ControlMode *interface_S_loader(void)
++{
++  return &ctl;
++}
+diff -ru TiMidity++-1.2.0/interface.h.in TiMidity.new/interface.h.in
+--- TiMidity++-1.2.0/interface.h.in	Wed Jan 20 18:40:13 1999
++++ TiMidity.new/interface.h.in	Thu Jan 21 11:58:20 1999
+@@ -31,5 +31,8 @@
+ /* Define if you have XSKIN interface. */
+ #undef IA_XSKIN
+ 
++/* Define if you have STED interface. */
++#undef IA_STED
++
+ /* Define if you have DYNAMIC interface. */
+ #undef IA_DYNAMIC
+diff -ru TiMidity++-1.2.0/timidity/controls.c TiMidity.new/timidity/controls.c
+--- TiMidity++-1.2.0/timidity/controls.c	Wed Jan 20 18:34:55 1999
++++ TiMidity.new/timidity/controls.c	Thu Jan 21 11:55:57 1999
+@@ -117,6 +117,13 @@
+ # endif
+ #endif
+ 
++#ifdef IA_STED
++  extern ControlMode sted_control_mode;
++# ifndef DEFAULT_CONTROL_MODE
++#  define DEFAULT_CONTROL_MODE &sted_control_mode
++# endif
++#endif
++
+ #ifdef IA_PLUGIN
+   extern ControlMode plugin_control_mode;
+ # ifndef DEFAULT_CONTROL_MODE
+@@ -167,6 +174,9 @@
+ #endif
+ #ifdef IA_GTK
+   &gtk_control_mode,
++#endif
++#ifdef IA_STED
++  &sted_control_mode,
+ #endif
+ #ifdef IA_PLUGIN
+   &plugin_control_mode,
+diff -ru TiMidity++-1.2.0/timidity/controls.h TiMidity.new/timidity/controls.h
+--- TiMidity++-1.2.0/timidity/controls.h	Wed Jan 20 16:09:17 1999
++++ TiMidity.new/timidity/controls.h	Tue Jan 19 18:11:26 1999
+@@ -96,6 +96,8 @@
+ #define CTLE_REFRESH		20
+ #define CTLE_RESET		21
+ #define CTLE_SPEANA		22
++#define CTLE_BAR		23
++#define CTLE_STEP		24
+ 
+ typedef struct _CtlEvent {
+     int type;		/* See above */
+diff -ru TiMidity++-1.2.0/timidity/playmidi.c TiMidity.new/timidity/playmidi.c
+--- TiMidity++-1.2.0/timidity/playmidi.c	Wed Jan 20 16:09:17 1999
++++ TiMidity.new/timidity/playmidi.c	Fri Jan 22 11:46:30 1999
+@@ -173,6 +173,10 @@
+ int note_key_offset = 0;
+ FLOAT_T midi_time_ratio = 1.0;
+ 
++#if 1
++static int compute_step;
++#endif
++
+ #ifdef PRESENCE_HACK
+ static void presence_resample(int32 count);
+ extern double presence_delay_msec;
+@@ -182,6 +186,7 @@
+ static void update_rpn_map(int ch, int addr, int update_now);
+ static void ctl_prog_event(int ch);
+ static void ctl_timestamp(void);
++static void ctl_barmarker_event(MidiEvent *ev);
+ 
+ static char *event_name(int type)
+ {
+@@ -2928,15 +2933,32 @@
+     {
+ 	int rc;
+ 
+-	rc = compute_data(cet - current_sample);
+-	ctl_mode_event(CTLE_REFRESH, 0, 0, 0);
+-	if(rc == RC_JUMP)
++#if 1
++	for(;cet - current_sample >= compute_step;)
+ 	{
+-	    ctl_timestamp();
+-	    return RC_NONE;
++	    rc = compute_data(compute_step);
++	    ctl_mode_event(CTLE_REFRESH, 0, 0, 0);
++	    if(rc == RC_JUMP)
++	    {
++		ctl_timestamp();
++		return RC_NONE;
++	    }
++	    if(rc != RC_NONE)
++		return rc;
++	}
++#endif
++	if(cet > current_sample)
++	{
++	    rc = compute_data(cet - current_sample);
++	    ctl_mode_event(CTLE_REFRESH, 0, 0, 0);
++	    if(rc == RC_JUMP)
++	    {
++		ctl_timestamp();
++		return RC_NONE;
++	    }
++	    if(rc != RC_NONE)
++		return rc;
+ 	}
+-	if(rc != RC_NONE)
+-	    return rc;
+     }
+ 
+     ch = ev->channel;
+@@ -3193,6 +3215,14 @@
+ 	    wrdt->update_events();
+ 	break;
+ 
++      case ME_BARMARKER:
++	ctl_barmarker_event(ev);
++	break;
++
++      case ME_STEP:
++	ctl_mode_event(CTLE_STEP, 1, ev->track, ev->a);
++	break;
++
+       case ME_EOT:
+ 	return midi_play_end();
+     }
+@@ -3205,6 +3235,7 @@
+ {
+     int rc;
+     static int play_count = 0;
++    MidiEvent *ev;
+ 
+     rc = play_mode->flush_output();
+     if(RC_IS_SKIP_FILE(rc))
+@@ -3216,14 +3247,13 @@
+     skip_to(midi_restart_time);
+ 
+     check_eot_flag = 1;
+-    for(;;)
++    for(ev = current_event;;ev++)
+     {
+-	rc = play_mode->play_event(current_event);
++	rc = play_mode->play_event(ev);
+ 	if(current_event->type == ME_EOT)
+ 	    break;
+ 	if(rc != RC_NONE)
+ 	    break;
+-	current_event++;
+     }
+ 
+     if(play_count++ > 3)
+@@ -3267,6 +3297,10 @@
+ 	 */
+ 	if(allocate_cache_size > 0)
+ 	    resamp_cache_reset();
++	buffer_pointer=common_buffer;
++#if 1
++	compute_step = (play_mode->rate * 2 + 50)/100; /* 20ms */
++#endif
+     }
+ 
+     init_mblock(&playmidi_pool);
+@@ -3451,6 +3485,20 @@
+     if(ctl->trace_playing && !midi_trace.flush_flag)
+ 	push_midi_trace_ce(ctl->event, &ce);
+     else
++	ctl->event(&ce);
++}
++
++static void ctl_barmarker_event(MidiEvent *ev)
++{
++    CtlEvent ce;
++    ce.type = CTLE_BAR;
++    ce.v1 = ev->track;
++    ce.v2 = ev->a;
++    ce.v3 = ev->b;
++    ce.v4 = ev->evtime;
++    if(ctl->trace_playing && !midi_trace.flush_flag)
++	push_midi_trace_ce(ctl->event, &ce);
++    else if(ctl->event != NULL)
+ 	ctl->event(&ce);
+ }
+ 
+diff -ru TiMidity++-1.2.0/timidity/playmidi.h TiMidity.new/timidity/playmidi.h
+--- TiMidity++-1.2.0/timidity/playmidi.h	Mon Nov 30 17:42:30 1998
++++ TiMidity.new/timidity/playmidi.h	Mon Jan 18 17:37:32 1999
+@@ -25,8 +25,8 @@
+    */
+ 
+ typedef struct {
+-  int32 time;
+-  uint8 type, channel, a, b;
++  int32 time, evtime;
++  uint8 type, channel, track, a, b;
+ } MidiEvent;
+ 
+ #define REVERB_MAX_DELAY_OUT (3 * play_mode->rate / 2)
+@@ -121,6 +121,8 @@
+ 				 */
+     ME_WRD,			/* for WRD tracer */
+     ME_TIMESIG,			/* Time signature */
++    ME_BARMARKER,		/* barmarker */
++    ME_STEP,			/* step */
+ 
+     ME_LAST = 254,		/* Last sequence of MIDI list */
+     ME_EOT = 255		/* End of MIDI */
+diff -ru TiMidity++-1.2.0/timidity/rcp.c TiMidity.new/timidity/rcp.c
+--- TiMidity++-1.2.0/timidity/rcp.c	Mon Nov 30 17:42:44 1998
++++ TiMidity.new/timidity/rcp.c	Tue Jan 19 13:14:20 1999
+@@ -46,6 +46,7 @@
+ {
+     int32 gate;			/* Note length */
+     int   ch;			/* channel */
++    int   tr;			/* track */
+     int   note;			/* Note number */
+     struct NoteList *next;	/* next note */
+ };
+@@ -54,17 +55,20 @@
+ {
+     int gfmt;
+     int32 at;			/* current time */
++    int bar;			/* current bar */
++    int step;			/* current step */
+     struct NoteList *notes;	/* note list */
+     MBlockList pool;		/* memory pool for notes */
+     struct NoteList *freelist;
+ };
+ 
+-#define SETMIDIEVENT(e, at, t, ch, pa, pb) \
+-    { (e).time = (at); (e).type = (t); \
+-      (e).channel = (uint8)(ch); (e).a = (uint8)(pa); (e).b = (uint8)(pb); }
++#define SETMIDIEVENT(e, at, t, ch, tr, pa, pb) \
++    { (e).time = (at); (e).evtime = (at); (e).type = (t); \
++      (e).channel = (uint8)(ch); (e).track = (uint8)(tr); \
++	  (e).a = (uint8)(pa); (e).b = (uint8)(pb); }
+ 
+-#define MIDIEVENT(at, t, ch, pa, pb) \
+-    { MidiEvent event; SETMIDIEVENT(event, at, t, ch, pa, pb); \
++#define MIDIEVENT(at, t, ch, tr, pa, pb) \
++    { MidiEvent event; SETMIDIEVENT(event, at, t, ch, tr, pa, pb); \
+       readmidi_add_event(&event); }
+ 
+ static int read_rcp_track(struct timidity_file *tf, int trackno, int gfmt);
+@@ -75,9 +79,11 @@
+ static void ntr_end(struct RCPNoteTracer *ntr);
+ static void ntr_incr(struct RCPNoteTracer *ntr, int step);
+ static void ntr_note_on(struct RCPNoteTracer *ntr,
+-			int ch, int note, int velo, int gate);
++			int ch, int tr, int note, int velo, int gate);
+ static void ntr_wait_all_off(struct RCPNoteTracer *ntr);
+ #define ntr_at(ntr) ((ntr).at)
++#define ntr_bar(ntr) ((ntr).bar)
++#define ntr_step(ntr) ((ntr).step)
+ 
+ #define USER_EXCLUSIVE_LENGTH 24
+ #define MAX_EXCLUSIVE_LENGTH 1024
+@@ -317,14 +323,14 @@
+     return 0;
+ }
+ 
+-static void rcp_tempo_change(int32 at, int32 tempo)
++static void rcp_tempo_change(int32 at, int32 tempo, int tr)
+ {
+     int c, a, b;
+ 
+     c = (tempo & 0xff);
+     a = ((tempo >> 8) & 0xff);
+     b = ((tempo >> 16) & 0xff);
+-    MIDIEVENT(at, ME_TEMPO, c, b, a);
++    MIDIEVENT(at, ME_TEMPO, c, tr, b, a);
+ }
+ 
+ static char *rcp_cmd_name(int cmd)
+@@ -521,10 +527,16 @@
+      */
+ 
+     sp = 0;
+-    ntr_init(&ntr, gfmt, readmidi_set_track(trackno, 1));
++    if(readmidi_set_track(trackno, 1) != 0)
++	ctl->cmsg(CMSG_ERROR, VERB_NORMAL, "Sorry internal error!\n");
++    ntr_init(&ntr, gfmt, 0);
+     current_tempo = (int32)(60000000.0 / init_tempo);
+     if(trackno == 0 && current_tempo != 500000)
+-	rcp_tempo_change(ntr_at(ntr), current_tempo);
++    {
++	rcp_tempo_change(ntr_at(ntr), current_tempo, trackno);
++	MIDIEVENT(ntr_at(ntr), ME_BARMARKER, ch,
++		  trackno, ntr_bar(ntr)&0x7f, (ntr_bar(ntr)>>7)&0x7f);
++    }
+     ntr_incr(&ntr, time_offset);
+ 
+     data_top = tf_tell(tf);
+@@ -554,9 +566,11 @@
+ 	    if(ctl->verbosity >= VERB_DEBUG_SILLY)
+ 	    {
+ 		ctl->cmsg(CMSG_INFO, VERB_DEBUG_SILLY,
+-			  "[%d] %d %s: ch=%d step=%d a=%d b=%d sp=%d",
++			  "[%d] ev.time=%d ev.bar=%d ev.step=%d "
++			  "%s: ch=%d step=%d a=%d b=%d sp=%d",
+ 			  tf_tell(tf) - 4 - track_top,
+-			  ntr_at(ntr), rcp_cmd_name(cmd), ch, step, a, b, sp);
++			  ntr_at(ntr), ntr_bar(ntr), ntr_step(ntr),
++			  rcp_cmd_name(cmd), ch, step, a, b, sp);
+ 	    }
+ 	}
+ 	else
+@@ -578,10 +592,11 @@
+ 	    if(ctl->verbosity >= VERB_DEBUG_SILLY)
+ 	    {
+ 		ctl->cmsg(CMSG_INFO, VERB_DEBUG_SILLY,
+-			  "[%d] %d %s: ch=%d step=%d gate=%d a=%d b=%d sp=%d",
++			  "[%d] ev.time=%d ev.bar=%d ev.step=%d "
++			  "%s: ch=%d gate=%d step=%d a=%d b=%d sp=%d",
+ 			  tf_tell(tf) - 6 - track_top,
+-			  ntr_at(ntr), rcp_cmd_name(cmd), ch,
+-			  step, gate, a, b, sp);
++			  ntr_at(ntr), ntr_bar(ntr), ntr_step(ntr),
++			  rcp_cmd_name(cmd), ch, step, gate, a, b, sp);
+ 	    }
+ 	}
+ 
+@@ -590,7 +605,8 @@
+ 	    if(gate > 0)
+ 	    {
+ 		int note = cmd + key_offset;
+-		ntr_note_on(&ntr, ch, note & 0x7f, b, gate);
++		ntr_note_on(&ntr, ch, trackno, note & 0x7f, b, gate);
++		MIDIEVENT(ntr_at(ntr), ME_STEP, ch, trackno, ntr_step(ntr), 0);
+ 	    }
+ 	    ntr_incr(&ntr, step);
+ 	    continue;
+@@ -779,7 +795,8 @@
+ 
+ 	  case 0xe2:	/* bank & program change */
+ 	    readmidi_add_ctl_event(ntr_at(ntr), ch, 0, b); /*Change MSB Bank*/
+-	    MIDIEVENT(ntr_at(ntr), ME_PROGRAM, ch, a & 0x7f, 0);
++	    MIDIEVENT(ntr_at(ntr), ME_PROGRAM, ch, trackno, a & 0x7f, 0);
++	    MIDIEVENT(ntr_at(ntr), ME_STEP, ch, trackno, ntr_step(ntr), 0);
+ 	    ntr_incr(&ntr, step);
+ 	    break;
+ 
+@@ -844,38 +861,44 @@
+ 	    }
+ 
+ 	    current_tempo = (int32)(60000000.0 / (init_tempo * a / 64.0));
+-	    rcp_tempo_change(ntr_at(ntr), current_tempo);
++	    rcp_tempo_change(ntr_at(ntr), current_tempo, trackno);
++	    MIDIEVENT(ntr_at(ntr), ME_STEP, ch, trackno, ntr_step(ntr), 0);
+ 	    ntr_incr(&ntr, step);
+ 	    break;
+ 
+ 	  case 0xea:	/* channel after touch (channel pressure) */
+ 	    a &= 0x7f;
+-	    MIDIEVENT(ntr_at(ntr), ME_CHANNEL_PRESSURE, ch, a, 0);
++	    MIDIEVENT(ntr_at(ntr), ME_CHANNEL_PRESSURE, ch, trackno, a, 0);
++	    MIDIEVENT(ntr_at(ntr), ME_STEP, ch, trackno, ntr_step(ntr), 0);
+ 	    ntr_incr(&ntr, step);
+ 	    break;
+ 
+ 	  case 0xeb:	/* control change */
+ 	    readmidi_add_ctl_event(ntr_at(ntr), ch, a, b);
++	    MIDIEVENT(ntr_at(ntr), ME_STEP, ch, trackno, ntr_step(ntr), 0);
+ 	    ntr_incr(&ntr, step);
+ 	    break;
+ 
+ 	  case 0xec:	/* program change */
+ 	    a &= 0x7f;
+-	    MIDIEVENT(ntr_at(ntr), ME_PROGRAM, ch, a, 0);
++	    MIDIEVENT(ntr_at(ntr), ME_PROGRAM, ch, trackno, a, 0);
++	    MIDIEVENT(ntr_at(ntr), ME_STEP, ch, trackno, ntr_step(ntr), 0);
+ 	    ntr_incr(&ntr, step);
+ 	    break;
+ 
+ 	  case 0xed:	/* after touch polyphonic (polyphonic key pressure) */
+ 	    a &= 0x7f;
+ 	    b &= 0x7f;
+-	    MIDIEVENT(ntr_at(ntr), ME_KEYPRESSURE, ch, a, b);
++	    MIDIEVENT(ntr_at(ntr), ME_KEYPRESSURE, ch, trackno, a, b);
++	    MIDIEVENT(ntr_at(ntr), ME_STEP, ch, trackno, ntr_step(ntr), 0);
+ 	    ntr_incr(&ntr, step);
+ 	    break;
+ 
+ 	  case 0xee:	/* pitch bend */
+ 	    a &= 0x7f;
+ 	    b &= 0x7f;
+-	    MIDIEVENT(ntr_at(ntr), ME_PITCHWHEEL, ch, a, b);
++	    MIDIEVENT(ntr_at(ntr), ME_PITCHWHEEL, ch, trackno, a, b);
++	    MIDIEVENT(ntr_at(ntr), ME_STEP, ch, trackno, ntr_step(ntr), 0);
+ 	    ntr_incr(&ntr, step);
+ 	    break;
+ 
+@@ -1144,6 +1167,10 @@
+ 		tf_seek(tf, stack[sp].loop_start, SEEK_SET);
+ 		same_measure = -1;
+ 	    }
++	    ntr_bar(ntr)++;
++	    ntr_step(ntr) = 1;
++	    MIDIEVENT(ntr_at(ntr), ME_BARMARKER, ch,
++		      trackno, ntr_bar(ntr)&0x7f, (ntr_bar(ntr)>>7)&0x7f);
+ 	    break;
+ 
+ 	  case 0xfe:	/* end of track */
+@@ -1218,6 +1245,8 @@
+     init_mblock(&ntr->pool);
+     ntr->gfmt = gfmt;
+     ntr->at = at;
++    ntr->bar = 0;
++    ntr->step = 1;
+ }
+ 
+ static void ntr_end(struct RCPNoteTracer *ntr)
+@@ -1225,7 +1254,8 @@
+     reuse_mblock(&ntr->pool);
+ }
+ 
+-static void ntr_add(struct RCPNoteTracer *ntr, int ch, int note, int gate)
++static void ntr_add(struct RCPNoteTracer *ntr,
++		    int ch, int tr, int note, int gate)
+ {
+     struct NoteList *p;
+ 
+@@ -1239,13 +1269,14 @@
+ 					   sizeof(struct NoteList));
+     p->gate = gate;
+     p->ch = ch;
++    p->tr = tr;
+     p->note = note;
+     p->next = ntr->notes;
+     ntr->notes = p;
+ }
+ 
+ static void ntr_note_on(struct RCPNoteTracer *ntr,
+-			int ch, int note, int velo, int gate)
++			int ch, int tr, int note, int velo, int gate)
+ {
+     struct NoteList *p;
+ 
+@@ -1256,12 +1287,14 @@
+ 	    return;
+ 	}
+ 
+-    MIDIEVENT(ntr->at, ME_NOTEON, ch, note, velo);
+-    ntr_add(ntr, ch, note, gate);
++    MIDIEVENT(ntr->at, ME_NOTEON, ch, tr, note, velo);
++    ntr_add(ntr, ch, tr, note, gate);
+ }
+ 
+ static void ntr_incr(struct RCPNoteTracer *ntr, int step)
+ {
++    ntr->step++;
++
+     if(step < 0) {
+ 	struct NoteList *p;
+ 	ntr->at += step;
+@@ -1294,7 +1327,7 @@
+ 		if(ctl->verbosity >= VERB_DEBUG_SILLY)
+ 		    ctl->cmsg(CMSG_INFO, VERB_DEBUG_SILLY,
+ 			      "NoteOff %d at %d", p->note, ntr->at);
+-		MIDIEVENT(ntr->at, ME_NOTEOFF, p->ch, p->note, 0);
++		MIDIEVENT(ntr->at, ME_NOTEOFF, p->ch, p->tr, p->note, 0);
+ 		p->next = ntr->freelist;
+ 		ntr->freelist = p;
+ 	    }
+@@ -1340,7 +1373,7 @@
+ 		if(ctl->verbosity >= VERB_DEBUG_SILLY)
+ 		    ctl->cmsg(CMSG_INFO, VERB_DEBUG_SILLY,
+ 			      "NoteOff %d", p->note);
+-		MIDIEVENT(ntr->at, ME_NOTEOFF, p->ch, p->note, 0);
++		MIDIEVENT(ntr->at, ME_NOTEOFF, p->ch, p->tr, p->note, 0);
+ 		p->next = ntr->freelist;
+ 		ntr->freelist = p;
+ 	    }

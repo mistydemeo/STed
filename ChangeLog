@@ -1,0 +1,32 @@
+2002-11-04  Daisuke Nagano  <breeze.nagano@nifty.ne.jp>
+	* sted2/Makefile.am: Fixed missing entry: sted3.h.
+	(Thanks to hma@syd.odn.ne.jp)
+
+	* sted2/sub/rcdcheck.c: Fixed methos of creation temporary
+	file: replacing using 'tmpnam' to 'mkstemp'.
+
+	* sted2/*.c: Added #ifdef HAVE_SUPPORT_STED3 to each sted3-related
+	codes.
+
+	* Updated automake to 1.7, and autoconf to 2.54
+
+2002-11-02  Daisuke Nagano  <breeze.nagano@nifty.ne.jp>
+
+	* sted2/sub/Makefile.am: fixed some symbol-error about
+	sayleen.
+	(Thanks to hma@syd.odn.ne.jp)
+
+2002-10-17  Daisuke Nagano  <breeze.nagano@nifty.ne.jp>
+
+	* sted2/sayleen: removed rcpconv and introduced sayleen.
+
+2001-05-06  Daisuke Nagano  <breeze.nagano@nifty.ne.jp>
+
+	* sted2/sted3.h: Created. All definitions, parameters and 
+	entries for new codes must be described in this file.
+
+	* sted2/file.c: Add codes for supporting port changes.
+
+	* sted2/key_sub.c (strch, chstr): If sted3 mode is enabled,
+	change the way to treat parameters to fit the mode.
+

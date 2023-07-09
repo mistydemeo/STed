@@ -1,0 +1,1336 @@
+2001-05-06  Daisuke Nagano  <breeze.nagano@nifty.ne.jp>
+
+	* sted2: STed3 に向けた処理を開始。以後 ChangeLog は
+	新規に作成します。
+
+
+2001-03-03  Daisuke Nagano  <breeze.nagano@nifty.ne.jp>
+
+	* sted2/*.c: 大量の sprintf を snprintf に修正。
+
+
+2000-10-14  Daisuke Nagano  <breeze.nagano@nifty.ne.jp>
+
+	* sted2/sub/nkflib.c: nkflib.c を、ライセンス問題の無い版へ
+	差し替えた。
+	(thanks to Masayuki Hatta <mhatta@po.airs.net>)
+
+
+Sat Apr 29 16:02:42 2000  Daisuke Nagano  <breeze.nagano@nifty.ne.jp>
+
+	* sted2/Makefile.am: librcpconv へのパス設定が正しくなかった
+	ミスを修正。
+                                	(thanks to masayuki-h@geocities.co.jp)
+
+
+Fri Apr 28 20:09:48 2000  Daisuke Nagano  <breeze.nagano@nifty.ne.jp>
+
+	* configure.in: mvwchgat (curses) の存在判定を行うようにした。
+	うまく動くかどうかは定かではない。
+                                        	(thanks to FreeBSD な方々)
+
+	* sted2/file.c: 読み込み時に SMF だったファイルは、書き出し時に
+	rcpconv で SMF に変換するようにした。要するに、SMF で書き出される、
+	ということ。
+
+	* ディレクトリ構造を変更した。src/ を sted2/ に変更。 
+
+
+Wed Mar 29 15:48:29 2000  Daisuke Nagano  <breeze.nagano@nifty.ne.jp>
+
+	* src/itor/itor.c: STed2 本体に SMF 読み込み機能を追加してみた。
+	要するに ItoR を内蔵した、ということ。
+
+
+Sun Jan 23 23:26:50 2000  Daisuke Nagano  <breeze.nagano@nifty.ne.jp>
+
+	* doc/FAQ : 項目の追加および削除。SMF 読み込みに関する
+	情報を加えてみた。
+
+
+Wed Jan  5 19:45:35 2000  Daisuke Nagano  <breeze.nagano@nifty.ne.jp>
+
+	* src/sted.c: MIDI デバイスを開ける部分をちょっと変更。
+
+
+Wed Dec 22 19:06:58 1999  Daisuke Nagano  <breeze.nagano@nifty.ne.jp>
+
+	* src/rcpconv/*: rcpconv-19991219 を導入。
+
+
+Wed Dec  8 18:07:30 1999  Daisuke Nagano  <breeze.nagano@nifty.ne.jp>
+
+	* src/sub/midi_in.c: int のサイズによっては怖いことになっていた
+	バグを修正。
+
+
+Tue Dec  7 22:00:06 1999  Daisuke Nagano  <breeze.nagano@nifty.ne.jp>
+
+	* src/defload.c (defload): {STED_DEFAULT_PATH}/sted2.cfg が
+	あると、/.sted2rc の一部の設定が認識されなかった仕様を修正。
+
+
+Fri May 28 23:15:24 1999  Daisuke Nagano  <breeze.nagano@nifty.ne.jp>
+
+	* src/sub/xwin.h: FORCE_XLOCALE を define すると、強制的に
+	Xlib の locale を使用するようにした。みんなウチの環境が
+	悪いんだい。
+
+	*Makefile.in.in: 諸般の事情でデフォルトでは $(prefix)/lib に
+	インストールしてしまうので、強制的に share に行くよう処理。
+	うーむ…
+
+	* src/rcpconv/rcpconv.c: RCP to SMF 変換部分を rcpconv に
+	変更。これで心おきなく配布できるのだ。
+
+
+Wed May 26 00:59:47 1999  Daisuke Nagano  <breeze.nagano@nifty.ne.jp>
+
+	* src/sub/x68funcs.c: setlocale に LC_MESSAGE を渡していたが、
+        とりあえず LC_ALL に変更してみる。効果の程は不明。
+
+
+Sat Apr 17 22:14:20 1999  Daisuke Nagano  <nagano@chacha.studio.breeze.jp>
+
+	* src/sub/xwin.c: WindowMaker 環境において、X 版起動時に
+	ウィンドウが出ないという割と致命的バグの修正。
+	SizeHints の x と y に値を入れていなかったのが敗因。
+
+
+Thu Apr  8 21:04:51 1999  Daisuke Nagano  <nagano@chacha.studio.breeze.jp>
+
+	* src/sub/xwin.c: Window 生成時に、XRaiseWindow(3X11) も
+	行うようにした。効果の程は不明。
+
+	* src/sted.h: NLS を使用しない場合の gettext 周りの対処が
+	足りなかったので修正。
+
+
+Tue Apr  6 07:11:39 1999  Daisuke Nagano  <nagano@chacha.studio.breeze.jp>
+
+	* etc/sted2.cnf: midiplay に --high-priority なんてオプションを
+	渡していたので修正。
+
+
+Sat Apr  3 15:03:49 1999  Daisuke Nagano  <nagano@chacha.studio.breeze.jp>
+
+	* src/sub/iocs_console.c: console で B_PRINT をやったときに
+	改行が余計に入っているような気配なので修正。
+	*gettext, automake, autoconf 化にとりあえず成功。うまく動かない
+	時は、修正パッチを含めてお知らせ下さい。単に「動かない」だけじゃ、
+	対処の仕様がないっす。
+	*src/disp.c: gettext 化に合わせて、fnc_dat[][] の表示部分を
+	変更。
+
+
+Tue Mar 16 18:00:01 1999  Nagano Daisuke  <nagano@nami.cc.kyushu-u.ac.jp>
+
+	* automake, autoconf 化。うまく動けばおなぐさみ…
+	* メッセージ出力周りを gettext 化。うまく動けば同じくおなぐさみ…
+	* 突然 ChangeLog の形式を変更。とはいえ以前のものはそのままなので、
+  	これっぽっちも意味は無いのかもしれなひ。
+
+
+Mar.05.1999
+
+ .~/.sted2rc も実行時設定ファイルとして読むようにした。読み込みの順番は、
+
+   ./sted2.cnf
+   STED_DEFAULT_PATH/sted2.cnf
+   ./sted2.cf2
+   STED_DEFAULT_PATH/sted2.cf2
+   ~/.sted2rc
+
+ です。
+
+
+Feb.10.1999
+
+ .Makefile の微調整。
+
+ .sub/x68funcs.c : STED_DEFAULT_PATH/nls にもメッセージカタログを置ける
+  ようにした。
+
+ .sub/nls/*.msg : 環境によっては、メッセージ番号の後に空白が複数あると
+  怒られるので、修正。
+
+ .contrib/timidity-interface : 更新
+
+                                              (thanks to 木下浩介)
+
+ .sub/xwin_key.c : xwin_bitsns に、一般キーの判定も追加した。
+  絶望的にテキトーな実装なので、割と残念だったり。
+  この実装により、音色選択時に Shift+UNDO で起動される Music Keyboard
+  Emulator が (とりあえず) 動作するようになった。要 timidity インタフェイス。
+
+
+Feb.05.1999
+
+ .sub/nls/C.msg の記述ミスを修正。
+
+                                      (thanks to Atsushi Yamagata)
+
+ .Changelog の日付が、今年に入っても 1998 のままだったのを修正。
+
+
+Feb.04.1999
+
+ .EDIT 時に C# が Cb (他の音符も同様) と表示されていたはづかしいバグを
+  修正。これは私の変更ミス。
+
+                                          (thanks to KAMO Sadanao)
+
+ .version.h: 追加。make archive 時に自動生成される。version 表記用。
+  ちなみに、ウィンドウ右上の version 表記は 2.07 のまま変わりません。
+  (狭くて他の情報が書けん…)
+
+ .Makefile の調整
+
+Feb.03.1999
+
+ .Solaris(2.6) にて、shared memory が確保できない場合がある。
+  とりあえず、shared memory を使わない版も復活させてみる。make 時に
+  -DNO_SHM で指定。
+                                               (thanks to Shinobu)
+
+ .#def_path にて、path の最後の '/' が無いときちんと認識してくれなかった
+  バグ (てゆーか仕様) を修正。オリジナルからの遺産。
+
+
+Jan.27.1999
+
+ .Makefile で変数 PWD が参照できない場合の方が多いので(^^;; 修正。
+  素直に configure 化するのが正解なんだろうな…
+
+
+Jan.24.1999
+
+ .出力メッセージの NLS 化終了。sub/nls/ 以下に cat 形式のメッセージ
+  カタログを入れておくので、適当に使ったってください。
+  今の所 make install はしません。sted2 本体すら install 出来ないのに。
+
+
+Jan.19.1999
+
+ .ソース中で rcd->mix_out() を使っている部分で複数イベントを
+  まとめて送っている箇所があったので、1 イベント毎に送るように
+  変更。timidity-interface 対策。
+
+
+
+Jan.13.1999
+
+ .Makefile 中で XDEFINES を設定しても、実は全く反映されていなかった
+  ミスを修正。
+
+                                                  (thanks to 坂井克也)
+
+ .contrib/ に、謎の japanese.cat を追加。さぁ、何に使おうか。
+
+
+Dec.25.1998
+
+ .リアルタイムレコーディング時に処理が重くなっていたのを修正。
+
+                                                  (thanks to 木下浩介)
+
+ .HISTORY を Changelog に名称変更
+
+Dec.24.1998
+
+ .MIDI データのミックス出力機能用インタフェイスを追加。
+
+ .timidity 用 interface plug-in の修正。
+
+                                                  (thanks to 木下浩介)
+
+ .Insert, Delete, Home, Undo, RollUp, RollDown, Opt.1, Opt.2 に
+  対応するキーも sted2.cnf で設定できるようにした。
+  キー配置情報募集中。
+
+
+Dec.18.1998
+
+ .STed 構築方法をちょっと変更。sub/ 以下を一旦ライブラリにしてリンクする
+  ようにした。Makefile がちょっとすっきりしたかも。
+
+
+Dec.16.1998
+
+ .X 版にて、アンダースコア('_') が入力できず、トラックエクスクルーシブの
+  エディタが起動できなかったバグを修正。
+
+ .外部 player 処理にて、運が悪いと STed ごと lock してしまう可能性が
+  あったので、適当に time-out 処理を入れた。
+
+ .同じく外部 player 処理にて、テンポラリのファイル名にひたすら拡張子が
+  付きまくる残念なバグの修正。
+
+ .contrib/timidity-interface/sted_c.c の修正。timidity でもトレース
+  表示を行ってみたい機能への伏線。従来版と異なり、timidity 本体にパッチを
+  当てなくても、単品で動作が可能になったような雰囲気。
+  使用方法に付いては、同ディレクトリの README.interface を参照のこと。
+
+
+Dec.13.1998
+
+ .trace 表示を実現するための伏線完結編。midiplay を使用したトレース
+  表示が可能に。
+
+
+Dec.11.1998
+
+ .trace 表示を実現するための伏線その３。演奏開始からのステップ数
+  (rcd->stepcount) さえ設定されていれば、あとは STed 側で佳きに
+  計らってくれるようにした。
+  rcd->stepcount の値だけでなんとかしてほしい player は、この値を設定する
+  時に必ず rcd->step=rcd->bar=-1 と（毎回！）すること。
+
+ .control キー & shift キーが一部効かなくなっていたのを修正。
+
+ .演奏トレース中は、ファンクションキー表示行の真中に "*" が表示されるように
+  してみた。
+
+ .構造体 RCD_HEAD に、smf_adr というエントリを追加。共有メモリ経由の演奏時、
+  SMF データはここに入っている
+
+ .contrib/README.interface を追加。trace 表示や一時停止などを行うため、
+  MIDI player にやって頂きたいことが書いてあります。もちろん、やらなくても
+  player としては問題なく使えますけど。
+
+
+Dec.07.1998
+
+ .「かな」の認識が一部うまくいっていなかったのを修正
+
+ .trace 表示を実現するための伏線その２、てゆーか実装そのもの。
+  詳細に付いては、contrib/timidity/ 以下を参照して下さい。
+
+                                            (以上 thanks to 木下浩介)
+
+
+Nov.25.1998
+
+ *UNIX USERS 1998 年 2 月号 に掲載された版
+
+ .一時停止 & trace 表示を実現するための伏線その１。shared memory を
+  用いたワークエリアの参照を行うようになる。要専用 player。
+
+ .sted2.cnf で、#issmfplayer を廃止。その代わりに #player の第一引数で
+  各種設定が渡せるようになった。
+
+   #player=(flag), (player_name) (option)
+
+     flag: bit0: rcp_capable(1)
+           bit1: sted controllable(1)
+
+  ということで。
+                                                     (thanks to 木下浩介)
+
+ .rcp->smf 変換回りを修正。LOOP と SAME MEASURE の配置によっては
+  正しく演奏できない症状があったバグを fix。
+
+ .sted2.cnf に、
+
+   KEY_XF1〜KEY_XF5
+   KEY_KANA, KEY_KIGO, KEY_TOROKU
+
+  を設定できるようにした。環境に応じ、適当にそれぞれに対応するキーの
+  名前を設定してください。
+  なお、設定方法は、
+
+   #KEY_XF1=Alt_L
+   #KEY_KANA=CapsLock
+
+  のようになります。= の右側には、KeySym の名前が入ります。 
+
+
+Nov.10.1998
+
+ .SJIS な環境設定が、sub/ 以下に反映されていなかったバグを修正
+
+ .一部のキー入力時に XF4/カタカナ・ひらがなが動作していなかったバグを
+  修正
+                                                  (以上 thanks to 木下浩介) 
+
+ .Makefile の大改訂。ほぼ全ての設定を、「上」の Makefile で行えるように
+  なった。コンパイル時の設定・修正は、ほぼ全て ./Makefile に集約されたと
+  思う次第
+
+
+Nov.02.1998
+
+ .Shift-JIS な環境で動作する場合を考慮し、Makefile 中に SJIS_CODES
+  というフラグを設定できるようにした。
+  SJIS な環境の方は、とりあえず nkf などで全ての *.[ch] を SJIS に
+  変換し、Makefile 中の
+
+## For HP-UX or else
+# CFLAGS+= -DSJIS_CODES
+
+  という行を enable にしてください。
+                                                  (thanks to 木下浩介) 
+
+ .contrib/ に、坂井克也<sakai@yoshi.ei.hosei.ac.jp> さんの
+  PC98x1 用キーボードパッチを追加。ありがとうございます(^^)
+
+
+Oct.25.1998
+
+ ."OSS" の表記を削除。SUN や HP-UX でも動くみたいですし。
+
+
+Oct.16.1998
+
+ .console 版(curses 版)を使うか否かを設定できるようにした。
+  sub/Makefile 中の、NCURSESDEFS = -DUSE_CURSES を disable とすれば、
+  curses 周りの処理を行わなくなる。
+  どーしても curses 周りの所為でコンパイルが通らない場合は、とりあえず
+  disable にしよう
+
+ .Window Manager から "Close" を指示 (Border のメニューから "CLOSE" とか)
+  しても終了しないようにする。"Destroy" やれば強制終了しますけど。
+
+ ."定義ファイルのロード中です。" を表示しないようにした
+
+ .入力フィールドに、カット＆ペーストを使用して文字列を入力できるように
+  した。日本語も OK なり。mule や kterm (rxvt は不可) から取り込んで
+  下さい。
+  なお、必ず内部的に SJIS に変換するようにしているので、一応御安心を
+
+  # selection を使用してます。cut-buffer 経由では拾ってませんので
+  # あしからず
+
+
+Oct.13.1998
+
+ .FreeBSD 用に Makefile その他の修正
+                                    (thanks to 井口剛, 園田@九大)
+
+ .sted2.cnf などを読み込む際に、STED_DEFAULT_PATH で指定した path からも
+  読み込むように変更。
+  その設定は、とりあえず sted.h で行っている。有問題。
+
+
+Oct.09.1998
+
+ .switch() にて、default: に break; がないとエラーが出る環境が
+  あるらしいので対処。
+
+
+Oct.02.1998
+
+ .rcp -> smf の変換周りが間違っていたのを修正
+
+ .HISTORY の書き方を変更。逐一細かく書いていくと、ファイルサイズが
+  大きくなるだけで変更点が分かり辛すぎるです
+
+
+Sep.14.1998
+
+ .sub/Makefile: -DX_LOCALE を設定できるようにした。
+  日本語が正しく出力されない場合は、この指定を有効にして下さい。
+  (但し、コレをやったとしてもうまく行かない環境もあります)
+
+ .FAQ: FAQ のようなものを設置。何かあったら追加します
+
+
+Sep.12.1998
+
+ .edit.c: Edit 時、コメント中に半角カナが入っていた場合に割と悲しい表示に
+  なっていたのを変更。SJIS->EUC で、テキストのサイズが大きくなってしまう
+  ため
+
+ .xwin_key.c: BITSNS を実装。track selector 等でも XF5(Alt_R) で音が
+  止められるようになる
+
+
+Sep.11.1998
+
+ .xwin.c: Init_STed_Window() で、setlocale() も呼び出すようにする
+                                                  (thanks to 園田@九大)
+
+ .xwin_print.c: tputs,gputs に関して、Extent 周りを修正。これで正しい
+  位置に文字列を表示するようになる。
+  (従来版は、若干下方向にずれる場合があった ^^;;)
+
+ .xwin.c: locale との闘いその１。色々と修正中なので、うまく日本語が
+  出ないという場合は Init_STed_Window() の setlocale() の周辺を
+  適当にいじってみて下さい。どうも正解はない臭い…
+
+
+Sep.08.1998
+
+ .x68funcs.c: child() を実装
+
+
+Sep.04.1998
+
+ .score.c: 譜面表示用の font を、とりあえず ♪ にしてみる。休符はさすがに
+  無いので、空白を出力するよう変更。
+  この部分、本気でやれるんなら、自動採譜関係のアルゴリズム拾うか作るかして、
+  それなりのモノを作ってみたいもんです
+
+ .defload.c: #FONT_NAME を追加。X 時に使用する Font Set が指定可能。
+  なお、ここで設定する名称は、そのまま XCreateFontSet(3x) に送り
+  込まれるので、Wild card や ',' で区切った記法など、色々と書ける
+
+ .xwin.c: 上記に合わせて、Font 周りを再設定
+
+ .xwin_key.c: XSTed_keyinp() で、TAB キーが認識できていなかったバグを
+  修正。これで track edit 時に TAB できちんと "JUMP MEAS" が出来る
+
+
+Sep.03.1998
+
+ .xwin_graph.c: XSTed_overlap() で、Window の title に、その時点で
+  読み込まれているファイルのタイトルおよびファイル名を表示するよう設定。
+  ちなみに、XSTed_overlap() 自体は、既に半分デッドコードと化している
+
+ .xwin*: 以前使っていた MIT-SHM 関係のコードを全面撤去
+
+
+Sep.02.1998
+
+ .midi_in.c を設置。open_midi_port()、close_midi_port()、get_midi_data()
+  を含む
+
+ .midi_in.h を設置。上記関数のプロトタイプ宣言を含む
+
+ .rcdcheck.c: 上記に合わせ、rcd_check() で open_midi_port() を呼び出す
+  ように設定。また、MIDI 入力処理として get_midi_data() を設置
+
+ .sted.c: end_proc() で、close_midi_port() を呼び出すよう設定。
+
+ .defload.c: "#MIDI_PORT=" というエントリを追加。MIDI 入力時のデバイス名を
+  指定する
+
+ .sted.c: mdinport() を修正。上記の #MIDI_PORT で設定したデバイス名
+  (の、/dev/ 部分を取ったもの) が、メインパネルの "MIDI IN" 部分に
+  表示されるようになる
+
+ .xwin_print.c: XSTed_curon/curoff を XSTed_misc.c から移設
+
+ .xwin_print.c: カーソル表示機能を追加
+
+ .xwin_misc.c: 廃止
+
+ .midi_in.c: is_midi_in() を設置。MIDI Port にデータが入って来ているか
+  否かを返す
+
+ .xwin_key.c: XSTed_midi_wait() を設置。上記の is_midi_in() を使用して、
+  キー入力と MIDI IN の両方を監視する
+
+ .curses.c: curses_midi_wait() を設置。上と同じ
+
+ .x68funcs.c: 上記の関数追加に併せて、key_midi_wait() を改定
+
+ .xwin_print.c: XSTed_tputs() に、簡単な改行処理を追加。スクロール
+ までは実装していない
+
+ .curses.c: curses_tputs() に以下同文
+
+ .sted2.cnf: #player に srgplay (ksakai@geocities.com作) のエントリを追加
+
+ .edit.c: MIDI 入力周りで、以前修正した部分が間違っていた箇所があったので
+  修正
+
+ .defload.c: defload() で、改行コードが 0x0d 0x0a と仮定されていたのを
+  修正
+
+ .sted2.cnf 上記の修正に合わせ、改行コードを 0x0a のみとした(tr -d "\015")
+
+  
+Aug.31.1998
+
+ .*.c: 古い版のコードを全面撤去。もう後へは戻れない ^^;
+
+ .curses.c: curses_sftsns() をちょっと改造。X 上で動作している場合は、
+  InputOnly な窓を開いて Shift/Control を入力してしまいたいという
+  機能のための伏線。まだ動かない
+
+
+Aug.30.1998
+
+ .rcdcheck.c: _get_midi_data() を設置。とりあえず、Serial port から
+  データを拾いたいところではあるが、よく考えると STed で serial を
+  open しちまうと、外部 player が open 出来なくなる…。痛し痒し
+
+ .xwin_graph.c: XSTed_rev_area() を実装。んが、さすがに重いので
+  今の所は comment-out
+
+ .xwin*: Window の幅、高さを変数とした。今の所 xwin.h で設定している
+  font の大きさを変化させると、それに追従して Window の大きさも変わるはず。
+  (但し、size によっては描画処理に失敗する場合あり)
+  そのうち、resource 等で設定できるようになるでせう。
+
+ .xwin*: そういえば、大改編の結果、MIT-SHM は使わなくなった。とりあえず、
+  万一のために関連する処理はソース中に残してあるが、そのうち跡型もなく
+  消滅する予定
+
+
+Aug.29.1998
+
+ .edit.c: 譜面・コントローラの trace 部分を修正。実装の違いに合わせた
+
+ .iocs.c: ontime() の作り方が絶望的に間違っていたのを修正(^^;;
+
+ .xwin_graph.c: 反転カーソルの表示方法を変更。xor を使用する
+
+ .rcdcheck.c: _stop_external_player() で、演奏を強制停止させるために
+  player に SIGTERM を送るようにする (それまでは SIGKILL だった)
+
+ .xwin_key.c: keyinp() で、XK_Meta_[LR] は Alt_[LR] と等価と判断。
+  ウチじゃこーなってるんで。ま、そーゆーことで。
+
+
+Aug.28.1998
+
+ .xwin_key.c: Alt key が Control key となる処理を中止
+
+ .xwin_key.c: XSTed_keyinp() で、左 Alt/無変換/変換/カタカナ/右 Alt が
+  それぞれ XF1 - XF5 に対応するよう設定。
+  config 等で設定できるようにしたいところではある。
+
+  なお、その辺にあった keyboard を元に設定したため、環境(というか
+  X の実装)によっては、きちんと認識されない可能性もあります。
+  その場合には、xwin_key.c の該当箇所を適当に書き換えてやってください。
+  そのサーバーで認識されている keycode 等は、xev(1x) で調べる事が出来ます
+
+ .xwin_key.c: テンキーによる入力が可能となった筈。付け忘れてた(^^;;
+
+ .xwin_key.c: Insert key 周りの処理を追加。挿入/上書きの切替えが
+  可能になったはず。
+  状態を表す LED 等が無いので、割と使い辛い気はする…
+
+ .curses.c: 同上
+
+ .xwin_key.c: Shift, Control の検査に XQueryPointer(3x11) を使用するよう
+  変更
+
+ .iocs*.c: iocs_ledmod() を、xwin/curses それぞれの担当関数を呼び出すよう
+  設定
+
+ .iocs_console.c: b_print() で、表示後に内部的なカーソル位置を更新して
+  いなかったミスを修正。これで、FIND: などの入力部分で表示が乱れなく
+  なったはず
+
+ .edit.c: CTRL/OPT1 + カーソル左右 で前/次 track へ移動できていた機能を、
+  Shift+カーソル左右でも可能とした。fvwm 系の Window Manager で不都合が
+  発生するため
+
+ .disp.c: sinput() の最後で、tdis() して fill() していたのを、fill()
+  してから tdis() するように変更
+
+ .sted.c: title 入力と memo 入力の部分が正しく動いていなかったので修正。
+  code 変換を行っていたのが悪かった気配
+
+
+Aug.27.1998
+
+ .xwin_mouse.c: mouse 周りの処理を実装。
+
+ .iocs_mouse.c: 上記に合わせ、該当関数を呼び出すよう実装
+
+ .xwin_graph.c: txyline() で、下方向に 1 pixel 多く描画していたようなので
+  修正
+
+ .xwin*.c: 高速化のためにその６。text の仮想画面として、vram ではなく
+  画像そのものを Pixmap に保存するよう変更。これにより、文字列の表示が
+  割と速くなる気配
+
+
+Aug.26.1998
+
+ .xwin*.c: 高速化のためにその５。表示周りのアルゴリズムを、根底から
+  変更。そりゃもう洒落にならんほど高速化。
+  PII-266MHz な環境だと、とりあえず XVI-24MHz と互角な速度が出ている感じ。
+  但し、一部で重ね合わせ処理がきちんと動作していない部分がある
+
+
+Aug.25.1998
+
+ .xwin*.c: 高速化のためにその 4。直前の screen のコピーを持ち、
+  描画の際「描き変わったか？」をチェックするようにして、XPutPixel() の
+  使用頻度を下げた。
+
+
+Aug.24.1998
+
+ .xwin_key.c: XSTed_keysns() で、キー入力が無かった場合に block していた
+  バグ(というか実装ミス) を修正
+
+ .xwin_print.c: MIT-SHM 時も、XGetSubImage が使えるようなので、そのように
+  修正
+
+
+Aug.21.1998
+
+ .record.c: flash() が、ncurses の同名関数と名前が被ってしまう状況が
+  あったので、名称を record_flash に変更
+
+ .curses.c: <ncurses/curses.h> を include していた部分を、sub/Makefile での
+  指示に合わせて <curses.h> とのいずれかを include するよう修正。
+  /usr/include/ncurses/curses.h をinclude した場合は、sub/Makefile で
+  NCURSESDEFS = -DHAVE_NCURSES_DIR をコメントアウトしてください
+
+                                      (以上 thanks to 坂井＠法政大)
+
+
+Aug.17.1998
+
+ .xwin_key.c: Shift, Control key の入力に関して幾つか fix
+
+ .xwin_key.c: XSTed_keyinp() で、返す ascii code に対して control/shift を
+  見ていなかった不具合を修正。これで ctrl+G で graphic window が開くように
+  なる
+
+ .xwin_graph.c: gline, gfill, gbox を修正。graphic window が正しく表示されて
+  いなかったため
+
+ .sub/Makefile: HAVE_MITSHM をここで設定 / 非設定するようにした。
+  環境によっては、MITSHM だと妙なコトになるようで
+
+ .score.c: 音符等の記号は外字で実現されていたが、そんなものは無いので
+  とりあえず有り合わせの記号で誤魔化す
+
+
+Aug.12.1998
+
+ .xwin*.c: Shared memory extension が使える場合には使用するよう変更。
+  却って遅くなったような気が…
+
+
+Aug.11.1998
+
+ .xwin.c: window title に compound text を使用するよう変更。深い意味は
+  ないかもしれない
+
+
+Aug.10.1998
+
+ .xwin_col.c: XSTed_tcolor() で、反転表示の設定に対応
+
+ .xwin*.c: またまた全面改訂。裏画面ではなく、仮想画面を使用して
+  処理するよう変更
+
+ .iocs_console.c: b_locate() および b_consol() で実装のミスがあったのを
+  修正。'w' で画面分割して右側で edit したときに不都合があった
+
+ .iocs_console.c: b_putmes() で、文字列表示色の設定を行うよう変更
+
+ .curses.c: curses_tg_copy() で、転送範囲を間違っていた部分を修正
+
+ .curses.c: curses_tputs() で、表示前に以前の文字列を消去するよう変更。
+  意味があるかどうかは定かではない
+
+ .sted.xpm: 下手っぴぃな icon を書いてみた。よろしかったら使ってやって
+  ください。あるいはもっと良い絵をください(^^;;;
+
+
+Aug.09.1998
+
+ .xwin*.c: 高速化を目論む。が、未だ成果無し
+
+ .sted.c: end_proc() で curses および X の window を閉じていたのを、
+  iocs_crtmod() 中で適当に処理するように変更。なるべく元のソースは
+  いじりたくないから
+
+ .sub/miditool 以下に、木村冬樹さん作の miditools からのコードを置く。
+  もちろん置くだけでなく、その中の rcptomid を改造して SMF ファイルの
+  出力機能(演奏時のみ) を追加した。
+  但し、rcptomid が吐く SMF は、timidity ではきちんと演奏されない
+
+ .defload.c: 上記のことを勘案し、sted2.cnf に オプション #ISSMFPLAYER=
+  を追加。
+
+  player が SMF しか扱えない場合は
+   #ISSMFPLAYER=True
+  としてください。RCP/R36ファイルが演奏できる場合は、設定しない、
+  あるいは False とでも書いておいてください。
+
+  それぞれの動作は、True が rcptomid() を通し、false は従来通り RCP/R36
+  ファイルのまま演奏する、となっている
+
+
+Aug.07.1998
+
+ .xwin*.c: 全面改訂
+
+ .x68funcs.c: STed_system_initialize() を設置。UNIX 用各種初期設定
+  (resource の読み込み、option の parsing 等)を行う。
+  とりあえず、環境変数 DISPLAY を見て、設定されていれば X 版が、
+  そうでなければ ncurses 版が起動されるよう設定してみる
+
+ .sted.c: 上記に併せて、main() の先頭で STed_system_initialize() を
+  呼び出す
+
+ .curses.c: curses_trascpy() にて、上スクロール時に、ラスタ番号
+  63 から空白を拾っていたため対処
+
+ .curses.c: curses_cls_eol() wclrtoeol() を使用して再実装
+
+ .curses.c: current_twindow を見ないよう変更。text 画面は 1 面だ
+
+ .curses.c: magic number を macro に置換え
+
+ .x68defines.h: を設置。各種 magic number はこのファイルに集約する
+
+
+Aug.06.1998
+
+ .xwin*.c: 仮想画面に Pixmap ではなく XImage を使用するよう(暫定的に)
+  修正。結果が出ないならば元に戻す予定
+
+
+Aug.04.1998
+
+ .xwin_graph.c: XSTed_t_scrw() を設置
+
+
+Aug.04.1998
+
+ .int istscrchanged, isgscrchanged を設置。読んで時の如く、それぞれの
+  画面を touch した場合に 1 となる flag
+
+ .xwin_graph.c: 上記に合わせ、XSTed_overlap() を変更。もちろん、
+  それぞれの flag が立っていた場合にのみ描画動作を行うように
+
+ .xwin_graph.c: XSTed_trascpy() を設置
+
+
+Aug.03.1998
+
+ .Window の screen を決め打ちしている箇所を修正
+
+ .xwin_graph.c: XSTed_tg_copy(), copy2() を実装
+
+ .xwin_key.c: Get_Key() で、XLookupString() を使用するよう変更
+
+
+Aug.02.1998
+
+ .curses.c: text 画面は、ひょっとしたら表 1 画面しか使っていないのでは、
+  ということで、そのように試しに修正。問題が無ければ、以後採用の予定
+
+ .xwin_*.c: text/graphics 画面の重ね合わせ処理を実装(不完全)。
+  しかも死ぬほど遅い
+  text,graphics それぞれの画面について pixmap を 2 枚ずつ用意し、
+  各 iocs 互換関数では、それらに対し描画を行う。そして、適当な場面で
+  XSTed_rwindow() よ呼び出し、current な graphics を Window の背景に、
+  同様に current な text を Window に XCopyArea(3X11) する。
+  この適当な場面というのが、key 入力やら何やらと、やたらと頻繁に起こる
+  ものなので、画面の更新がそれなりに多くなるという塩梅。
+  とはいえ、更新頻度を下げると、表示が実動作に反映されなくなるし、
+  痛し痒し状態
+
+
+Aug.01.1998
+
+ .xwin_key.c: XSTed_keysns() を設置。キー入力があるか否かを調べる
+
+ .iocs_key.c: 上記に合わせ、_iocs_keysns() を修正
+
+ .xwin_print.c: XSTed_tputs() で、XmbDrawImageString(3X11) を使用するよう
+  修正
+
+
+Jul.31.1998
+
+ .xwin_key.c: XSTed_keiin(), XSTed_keyinp(), XSTed_sftsns() ,
+  XSTed_key_wait() を実装
+
+ .xwin_graph.c: 座標計算をちょっと修正
+
+ .hprint.c: X 環境の場合は文字列に色を付けるよう修正。これがオリジナルの
+  動作だけど、curses ではどーしようもなかったので
+
+ .curses.c: int x68_scancode[] を、外部からも見えるよう修正。
+  xwin_key.c でも使うため
+
+
+Jul.30.1998
+
+ .PI が define されているのは Linux だけのようなので修正
+
+ .sted.h: errno.h を include
+
+ .sub/Makefile: ncurses 周りを修正
+
+  (以上 thanks to 園田＠九大(ysonoda@dontaku.csce.kyushu-u.ac.jp))
+
+ .xwin.c: Setup_FontSet(), Setup_ColorMap() を設置。それぞれ、FontSet と
+  ColorMap を準備する
+
+ .xwin_print.c: XSTed_[tg]puts() を暫定的に設置。とりあえず文字が出るように。
+  なお、文字列表示には XmbDrawString(3x) を使用。FontSet の設定も併せ、
+  locale がマトモに設定されてないと動かない気配
+  (多分 LANG = ja_JP.ujis で動くのでは?)
+
+ .xwin_graph.c: XSTed_gline(), XSTed_gbox() XSTed_gfill()をとりあえず設置。
+  重ね合わせ処理が行われていないため、後々必ず問題が起きるはず
+
+ .xwin*: color 周りの実装。DirectColor 以外の Visual であれば、depth を
+  問わず color が利用できるようになった気配
+
+
+Jul.28.1998
+
+ .xwin.[ch]: 修正開始。
+
+ .xwin_col.c: 設置。X での色周りの設定等を行う
+
+ .xwin_graph.c: 設置。X での描画周りの処理を行う
+
+ .xwin_key.c: 設置。X でのキー入力関係の処理を行う
+
+ .xwin_print.c: 設置。X での文字表示関係を取り扱う
+
+ .xwin_misc.c: 設置。X での様々な処理を行う
+
+ .上記のファイルに、とりあえず ncurses 版と同等の関数を設置。現在の
+  ところ宣言のみではある。
+
+ .上記に合わせ、sub/*.c で curses_*() な関数を呼び出している箇所を、
+  int isxwin の値を見て XSTed_*() も呼び出すよう変更。
+  なお、現在のところ isxwin, isconsole とも、sted.c 中で適当に設定
+
+ .xwin_key.c: XSTed_bitsns() を設置
+
+ .xwin_graph.c: XSTed_txbox(), XSTed_txxline(), XSTed_txyline()
+                XSTed_gbox(), XSTed_gpoint(), XSTed_gline() を設置
+
+
+Jul.12.1998
+
+ .README: 適当に生成
+
+
+Jul.07.1998
+
+ .rcdcheck.c: _exit_external_player() を設置。外部 player が終了すると
+  呼び出され、様々な後処理を行う
+
+
+Jul.02.1998
+
+ .dos.c: nfiles()にて、存在する directory entry が読み込めない場合が
+  あったので、とりあえず stat(3) の返り値が ENOENT だった場合にはそのまま
+  処理を続行するよう修正。何故だー？
+
+ .iocs_key.c: b_sftsns() を実装
+
+ .curses.c: curses_sftsns() を上記のために実装。とりあえず、直前に拾った
+  キーイベントを調べ、A - Z だったら SHIFT が押されていたものと扱う。
+  なお、これ以外のキーに付いては、ncurses の制限から認識する事は
+  出来ないです。御了承下さい
+
+
+Jul.02.1998
+
+ .sub/Makefile: include path に /usr/include/ncurses を復活。ご利用の
+  環境に合わせて、適当に設定してください
+
+ .dos.c: files(),nfiles() で、file の timestamp を格納するよう変更
+
+ .basic.c: tmasc(), dtasc() を上記に合わせ実装
+
+ .trkmemo[] を表示する部分がいくつか存在したので、そちらにも eucconv() を
+  カマした
+
+ .curses.c: curses_keyinp() で、F11 を "記号" キーの、F12 を "登録" キーの
+  代用とした
+
+ .redit.c: rtrk_ed() で、console 時にラインカーソル？が表示できなかったため、
+  とりあえず専用カーソル表示部分を追加。X 版では、オリジナルと同様の
+  ラインカーソルになる予定
+
+
+Jul.01.1998
+
+ .dos.c: _dos_files() 中で、root directory が正しく読み込めていなかった
+  バグを修正
+
+ .trkset.c: trk_lin() 中で、トラック毎の memo を表示する部分に eucconv() を
+  カマすよう変更。
+  他に日本語が表示される可能性がある箇所があったら、お知らせください。
+
+
+Jun.30.1998
+
+ .basic.c: symbol() を実装。font の size についてはどうしようもないので、
+  とりあえず sted2.cnf の #comment の最大文字数を 29 文字に制限
+  (symbol() は ここでしか使われていない)
+
+ .ついでに、sted2.cnf の #comment のエントリに色々加えてみる。お好きな
+  文字列をお選びください:-)
+
+
+Jun.29.1998
+
+ .sted2.cnf: #player のエントリに drvmidi を追加。正しく動くかどうかは
+  定かではない(^^;;
+
+ .curses.c: <ncurses.h> を include していたのを、<ncurses/curses.h> を
+  include するよう変更
+
+
+Jun.28.1998
+
+ .score.c: dat_info() を、1/4角文字を使わず表示する関数を使用
+  （原作ではコメントアウトされていた / 旧版では使われていた）
+
+ .disp.c 他: 外字を使用してアイコン?などを表示していた部分を、
+  一般の記号（でもja_JP）で表示するよう変更。これも、原作で
+  コメントアウトされていた部分を復活
+
+ .select.c: 小文字のファイル名を持つファイルが読み込めなくなって
+  いたのを修正。以前変更してしまった箇所が悪かったので元に戻しただけ。
+
+ .rcdcheck.c: _play_external_player(), _stop_external_player() を
+  実装
+
+ .sted2.cnf: #player= というエントリを追加。上記の外部 player を
+  指定する
+
+ .x68funcs.c: key_wait() を設置。名前通り、キーが入力されるまで待つと
+  いうもの。この関数を用いて、ソース中で while(B_KEYSNS()==0){} のような
+  ループを用いた入力待ちを置き換えた
+
+ .curses.c: curses_key_wait() を併せて設置
+
+ .x68funcs.c: key_midi_wait() を設置。edit.c 中で、キー入力と MIDI port
+  からの入力両方を待っている箇所があったので、そのため。
+  MIDI 周りはとりあえず未実装
+
+ .rcpplay というスクリプトを contrib/ に追加。rcptomid と midiplay を
+  使用して、一発で rcp ファイルを演奏してしまいたいツール
+
+ .オリジナルの配布条件に従って、オリジナルのドキュメント等を
+  original_docs/ 以下に追加。
+  なお、オリジナルの "追悼.doc" は、tuitou.doc にファイル名を変更
+
+
+Jun.27.1998
+
+ .graph.c: tg_copy(), tg_copy2 を実装
+
+ .curses.c: curses_tg_copy(), curses_tg_copy2() を合わせて実装。
+  トラックエディット時に 'W' でマルチウインドウが開けるようになる
+
+ .graph.c: txcur() で、edit_scr を見て X 座標に補正を加えていなかった
+  ミスを修正
+
+
+Jun.23.1998
+
+ .dos.c: name_conv() の仕様を、name_conv( dest, src )の形式にする。
+  それまでは、dest=name_conv( src ) としていた…
+
+ .basic.c: dtasc(),  tmasc() を、それぞれ "\0" を返すように変更。
+  あくまで暫定的な処置
+
+ .key_sub.c: note2[][] について、半角の♭がないので b に変更
+
+ .graph.c: t_scrw() を実装。
+
+ .curses.c: curses_t_scrw() を合わせて実装
+
+
+Jun.22.1998
+
+ .dos.c: files(), nfiles() の実装を開始
+
+ .dos.c: ファイル名によるファイルアクセス関数で、Human 形式のファイル名を
+  unix 形式に変換する wrapper name_conv()をかけるようにする。
+  単に先頭の drive letterを取っているだけだったり
+
+ .fopen(3) でファイルを開いている部分を、fopen2() を使用するように変更。
+  ファイル名の取扱を、上記のように変更するため
+
+Jun.5.1998
+
+ .hprint.c: H_PRINT() を実装。色は出ない
+  おまけで H_PRINT2() も実装。単に H_PRINT を呼び出しているだけ
+
+ .iocs_igraph.c: txrascpy() を実装
+
+ .curses.c: curses_trascpy() を実装。上方向へのスクロール処理がうまく行かない
+
+
+Jun.2.1998
+
+ .rcdcheck.c: null_func_rint() が -1 を返すように変更。これで
+  とりあえず edit 画面に入れるようになる
+
+ .sted.c: end_proc() で curses_close_window() を呼び出すタイミングを変更。
+  終了後に console が乱れる事があったため
+
+
+Jun.01.1998
+
+ .iocs_key.c: b_keyinp, b_keysns を実装
+
+ .curses.c: curses_keyinp を実装
+
+ .curses.c: curses_gputs に curses_glocate の機能を編入。iocs_home 等との
+  関係で不整合が現われたため
+
+ .curses.c: curses_ghome を設置。iocs_graph.c: home() から呼び出される
+
+
+May.28.1998
+
+ .dos.c: fnckeygt/st を実装。global val である fnc_[s]func, fnc_key に
+  キー定義情報を格納
+
+ .curses.c: curses_keyin を、上記の実装に合わせて変更。BackSpace/Delete の
+  扱いに関して一考の余地
+
+ .curses.c: curses_keyin で、getch で ERR が返ってきたら ungetch を
+  行わないように変更。フォーム入力が出来なかったのはコレが原因
+
+ .curses.c: graphics, text の重ね合わせで実現されていたカーソル（もどき）の
+  動作を、適当にエミュレートしてみる。
+  今のところ、Play/Mute/etc.. のフィールド以外はきちんと表示されている気配
+
+
+May.27.1998
+
+ .curses.c: curses_trev を設置。graph.c: txcur() から呼び出される。
+  おそらく、指定座標の text vram を反転させる関数
+
+ .curses.c: curses_gfill を設置。basic.c: fill() から呼び出される。
+  graphic vram の指定領域を指定色で fill するもの。とりあえず
+  指定領域を space で fill してみた
+
+ .curses.c: curses_tfill を設置。iocs_tgraph.c: txfill 等から呼び出される
+  text vram の指定領域を指定色で fill するもの。動作は gfill と同じ
+
+
+May.26.1998
+
+ .original で *.s だったソースも ./sub 以下に格納。
+  更に、[iocs,dos]lib.h も同様に格納。これで Linux 版独自のソースは
+  すべて ./sub 以下に入ったことになるはず
+
+ .disp.c: msg_clr で RASCPY を使ってテキストを消去していたのを、
+  space を使用して上書きするようにする
+
+ .curses.c: text vram 上の色を、curses の文字 attribute を使用して表現
+
+May.25.1998
+
+ .basic.c: b_striS(char *buf, int num) を実装。num を文字列にして
+  buf に格納する関数ととりあえず解釈してみた。合ってるかどうかは不明
+
+ .とりあえず、文字に関しては console(curses) に出力するようにしてみる。
+  そのために、
+   .graph.c: g_print を実装
+   .iocs_console: b_print, b_putmes, b_locate, b_clr_al, 
+    b_clr_ed を実装
+   .int isconsole を設置。isconsole=1 でコンソール出力モード？  
+
+ .curses を使用して key input を実現
+   .dos.c: inpout を実装
+
+ .以上のことを実現するため、sub\curses.c を設置
+
+ .sted.c: 外字で表示していたロゴを ascii で表示するよう変更。
+  元のコードで comment-out されていたものと取り換えただけ
+
+
+May.25.1998
+
+ .dos.c に、必要な_dos_*を全て設置。中身はあったり無かったり
+
+ .x68funcs.h に b_striS, KNJCTRL, mspos, dtasc, tmasc を、
+  dos.c に dskf をそれぞれ設置。いずれも宣言のみ
+
+ .iocs.c を iocs_console.c, iocs_key.c, iocs_graph.c, iocs_misc.c に
+  分離。まだ増えるかも
+
+ .console 周りを改定予定。_iocs_b_console が思ったよりも難物
+
+ .select.c 中の str_change() を、'/' を '\' に変換しないように修正
+  逆に、'\' を '/' に変換するようにしてみる。副作用は未知
+
+ .select.c, sted.c 中のほとんどの '\\' を '/'で置換え。一部 key input を
+  処理してると思われる部分のみそのまま
+
+ .sted.c 中で SETBLOCK((int)trk[0], ...) としているのを、
+  SETBLOCK((void *)trk[0], ... ) とした。
+
+ ._iocs_ontime を、gettimeofday を使用して実装
+
+
+May.22.1998
+
+ .iocs/doslib.h でのプロトタイプ宣言を、御本家を参考に全て行う
+
+ .x68funcs.h に b_striS, KNJCTRL, dskf, mspos, dtasc, tmasc の宣言を
+  追加
+
+
+May.20.1998
+
+ .dos.c : _dos_c_cls_al, _dos_c_cls_ed
+  _iocs_b_clr_al/ed を呼び出すだけ。#define したほうがいいのかも
+
+
+May.20.1998
+
+ .xwin.c, xwin.h を生成。X Window System での Widget を実装するため。
+  各種 iocs は、全てこの Widget 上で動作する予定
+  （一応、console も(ncurses等を使用して)予定には入っている）
+
+
+May.19.1998
+
+ .basic.c, dos.c, iocs.c, rcdcheck.c, x68funcs.[ch] を sub/ ディレクトリ
+  以下に移動。併せて Makefile の修正・作成
+  以後、unix 版独自のコードはこのディレクトリ以下に置くこと
+
+ .memo ファイルを生成。製作中の覚書などは全てこのファイルの中に
+  書き込む
+
+ .iocs.c 中の _iocs_b_print を printf(3) を使用して実装。
+
+ .iocs エミュレートとして、内部に仮想的な座標系を設ける
+  ( iocs_current_text_x, iocs_current_text_y )
+  ( X68_TEXT_CONSOLE_WIDTH, X68_TEXT_CONSOLE_HEIGHT )
+
+ .それに併せ、_iocs_b_locate を実装。
+
+ .iocs.c に関数を追加。内容は
+
+   ._iocs_b_clr_al 
+   ._iocs_b_clr_ed
+   ._iocs_b_putmes
+
+  いずれも未実装。
+
+ .dos.c 中の _dos_malloc を修正。メモリを確保できない時には無条件に
+  0x82000000 を返す。オリジナルでは、確保可能なバイト数 | 0x81000000 を
+  返している
+
+
+May.18.1998
+
+ .hprint.s を元に hprint.c を作成。現在の内容は、
+
+   .void H_INIT(void)
+   .void H_PRINT ( char *, char *, char * )
+   .void H_PRINT2 ( char *, char *, char * )
+    いずれも未実装。
+    hprint.s 中では H_PRINT* は２つの arguments を取っているようだが、
+    machin.h 中では 3 arguments と宣言されている。ソース中では、
+    redit.c 中で１個所だけ H_PRINT2("","",tmp0) として使われている他は、
+    全て ３つめの argument は "" が設定されているようだ
+
+ .ongraph.s を元に ongraph.c を作成。現在の内容は、
+
+   .void OnGraphic( void )
+    未実装
+
+ .graph.s を元に graph.c を作成。現在の内容は、
+
+   .void g_print( int , int , char *, int )
+   .void rev_area( int , int , int )
+   .void tg_copy( int )
+   .void tg_copy2( int )
+   .void t_scrw( int , int , int , int , int , int )
+   .void txcur( int , int , int , int , int )
+    いずれも未実装
+
+ .scdsp.s を元に scdsp.c を作成。現在の内容は、
+
+   .void scpanel_dsp( int , int , unsigned char * );
+   .void scinst_dsp ( int , int , unsigned char * );
+    いずれも未実装
+
+ .graph.c および scdsp.c 中の関数のプロトタイプ宣言を machin.h 中で行う
+
+ .sted.c 中の set_errvect(void) と rst_errvect(void) を comment-out
+
+
+May.17.1998
+
+ . *.c and *.h の修正開始。
+
+   .cat *.[ch] | nkf -euc | tr -d "\015" > *.[ch] でコード変換
+   .mule上で indent-region / 文末の ^Z を削除
+
+ .全ての *.c に対し、include する header file を "sted.h" のみとし、
+  sted.h 中で、各種 header file を include するように変更
+
+ .iocslib.h / doslib.h / graph.h を適当に生成。
+
+   .iocslib.h:
+     struct _x68_fntbuf, X68_FNTBUF
+     struct _x68_txfillptr, X68_TXFILLPTR
+     struct _x68_ylineptr, X68_YLINEPTR
+    を定義
+
+   .doslib.h
+     struct _x68_filbuf, X68_FILBUF
+    を定義
+
+   .graph.h
+     PID2 を (1.57079632679489661923) (=pi/2)
+    と定義(pi-div-2 ?)。合っているかどうかは分からない
+
+ .X68k 版の iocslib.h / doslib.h から、各種 defines を移植。
+
+ .全ての *.c に対し、inline 宣言されている function から "inline" を
+  取り除く。不都合があるかもしれない
+
+ .全ての *.c に対し、宣言が必要な function について 宣言を追加
+
+ .x68funcs.c を生成。現在の内容は、
+
+   .void strmfe( char dest, *char *node , char *extention )
+   .float val( char * )
+
+ .x68funcs.h を生成。x68funcs.c および関連する 68 origins の宣言等を行う
+
+ .rcdcheck.s から rcdcheck.c を作成
+
+ .mcpy.s から mcpy.c を作成。
+
+   .memcpy_l は memmove(3) を使用して実装
+   .keyclr は宣言のみ
+
+ .sted.c 中の  void ErrorTrap(void)  を comment-out
+
+ .iocslib の互換のために iocs.c を作成。現在の内容は、
+
+   .int _iocs_b_print( const char * )
+   .int _iocs_b_locate( int, int )
+    但し、いずれも宣言のみで実体は無し
+
+ .doslib の互換のために dos.c を作成。現在の内容は、
+
+   .void *_dos_malloc(int)
+    malloc(3) を使用して実装
+
+ .X-BASIC 互換関数の互換のために、basic.c を作成。現在の内容は、
+
+   .void fill( int, int, int, int, unsigned int )
+   .void box( int, int, int, int, unsigned int, unsigned int )
+   .int  point( int, int )
+   .void line( int, int, int, int, int, int )
+   .void symbol( int, int, char *, char, char, char, int, char )
+    いずれも未実装
+    なお、プロトタイプ宣言は x68funcs.h 中で行った。
+
+
+May.16.1998
+
+ .開発開始
+
+ .ソースを Nifty-Serve(http://www.nifty.ne.jp/) の FMIDITOL で入手（同梱）。
+  この場を借りて、ソース公開に尽力された皆様に深く御礼申し上げます。
+  そして、改めて TURBO こと 戸田貴之氏の後冥福をお祈り致します。
+
+                    ( Daisuke Nagano / breeze.nagano@nifty.ne.jp )
