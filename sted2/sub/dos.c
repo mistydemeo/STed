@@ -9,7 +9,9 @@
 
  */
 
+#include "curses-local.h"
 #include "sted.h"
+#include "xwin.h"
 
 /* variables */
 

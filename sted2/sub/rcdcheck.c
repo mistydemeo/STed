@@ -7,6 +7,10 @@
 
 */
 
+int add_set();
+int step_cluc2();
+int meas_add();
+
 #include "sted.h"
 #include <signal.h>
 

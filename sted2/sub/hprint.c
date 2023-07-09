@@ -10,7 +10,9 @@
 
  */
 
+#include "curses-local.h"
 #include "sted.h"
+#include "xwin.h"
 
 void H_INIT ( void ) {
 

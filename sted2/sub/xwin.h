@@ -127,8 +127,8 @@ extern int XSTed_tpalet( int , int );
 extern int XSTed_tcolor( int );
 extern int XSTed_gcolor( int );
 
-extern int XSTed_SetTCol( int );
-extern int XSTed_SetGCol( int );
+extern int XSTed_SetTColor( int );
+extern int XSTed_SetGColor( int );
 
 /* xwin_print.c */
 
@@ -172,6 +172,7 @@ extern int  XSTed_sftsns( void );
 extern int  XSTed_bitsns( int );
 extern int  XSTed_keysns( void );
 extern void XSTed_key_wait( void );
+extern void XSTed_midi_wait( void );
 extern void XSTed_ledmod( int, int );
 
 /* xwin_mouse.c */

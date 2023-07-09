@@ -9,7 +9,9 @@
 
  */
 
+#include "curses-local.h"
 #include "sted.h"
+#include "xwin.h"
 
 void g_print( int x, int y, char *str, int col ) {
 

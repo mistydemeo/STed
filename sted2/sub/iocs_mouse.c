@@ -9,6 +9,7 @@
  */
 
 #include "sted.h"
+#include "xwin.h"
 
 /* functions */
 
