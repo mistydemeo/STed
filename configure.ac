@@ -133,7 +133,7 @@ dnl Check for function 'mvwchgat' in any curses libraries
 
 oldlibs=$LIBS
 LIBS="$LIBS $CURSES_LIBS"
-AC_CHECK_FUNC( mvwchgat, AC_DEFINE(HAVE_MVWCHGAT) )
+AC_CHECK_DECL( [mvwchgat], [AC_DEFINE(HAVE_MVWCHGAT)], [], [#include <curses.h>] )
 LIBS="$oldlibs"
 
 dnl local definitions
