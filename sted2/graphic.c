@@ -9,12 +9,12 @@
 #define		PL1	(0x20000/2)
 #define		PL2	(0x20000)
 
-void	g_print();
-void	tg_copy();
-void	rev_area();
-
 /***************************/
 /*
+  void  g_print();
+  void  tg_copy();
+  void  rev_area();
+
   void	g_print(int x,int y,unsigned char *s,int c)
   {
   int	sta;
