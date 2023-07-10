@@ -242,13 +242,6 @@ static char *Patchlevel =
    に相当する。引数の sf が NULL の時は SEOF を返す。
 */
 
-typedef struct __SFILE {
-  unsigned char *pointer;      /* 文字列現在のポインタ */
-  unsigned char *head;	       /* 文字列の最初の位置 */
-  unsigned char *tail;	       /* 文字列の許容の最後の位置 */
-  char mode[20];	       /* 文字列オープンモード newstr,stdout,stdin */
-				/* "newstr stdin" の組合わせはない */
-} SFILE;
 #define SEOF -1
 
 static SFILE *sstdout=NULL;
@@ -285,27 +278,6 @@ static int check_kanji_code(unsigned char *p);
 #ifdef EASYWIN /*Easy Win */
 extern POINT _BufferSize;
 #endif
-
-/*      function prototype  */
-
-static  int     noconvert(SFILE *f);
-static  int     kanji_convert(SFILE *f);
-static  int     h_conv(SFILE *f,int c2,int c1);
-static  int     push_hold_buf(int c2,int c1);
-static  int     s_iconv(int c2,int c1);
-static  int     e_oconv(int c2,int c1);
-static  int     s_oconv(int c2,int c1);
-static  int     j_oconv(int c2,int c1);
-static  int     line_fold(int c2,int c1);
-static  int     pre_convert(int c1,int c2);
-static  int     mime_begin(SFILE *f);
-static  int     mime_getc(SFILE *f);
-static  int     mime_ungetc(unsigned int c);
-static  int     mime_integrity(SFILE *f,unsigned char *p);
-static  int     base64decode(int c);
-static  int     usage(void);
-static  void    arguments(char *c);
-static  void    reinit();
 
 /* buffers */
 
@@ -358,7 +330,6 @@ static char            kanji_intro = DEFAULT_J,
 
 /* Folding */
 
-int line_fold();
 #define FOLD_MARGIN  10
 #define DEFAULT_FOLD 60
 
@@ -1079,8 +1050,7 @@ arguments(char *cp)
 #endif
 
 int
-noconvert(f)
-    SFILE  *f;
+noconvert(SFILE  *f)
 {
     int    c;
 
@@ -1558,7 +1528,7 @@ s_iconv(int c2, int c1)
 }
 
 
-e_oconv(int c2, int c1)
+static int e_oconv(int c2, int c1)
 {
     c2 = pre_convert(c1,c2); c1 = c1_return;
     if(fold_f) {
@@ -2200,9 +2170,8 @@ mime_getc(SFILE *f)
     return  Fifo(mime_top++);
 }
 
-int
-mime_ungetc(c) 
-unsigned int   c;
+static int
+mime_ungetc(unsigned int   c) 
 {
     Fifo(mime_last++) = c;
     return c;
