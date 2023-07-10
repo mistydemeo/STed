@@ -1263,7 +1263,7 @@ void	frees(char *pth,int cx)
 }
 
 /***************************/
-inline char	*dirs(char *s)
+extern inline char	*dirs(char *s)
 {
   int	a;
   static char	name[24];

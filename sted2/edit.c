@@ -27,7 +27,7 @@ static char	*inmd[6]={
   "EDIT MIDI IN(Step)","EDIT MIDI IN(P/St)"};
 
 /***************************/
-inline int	option22(int md,int sm,int ad,int ew)
+extern inline int	option22(int md,int sm,int ad,int ew)
 {
   int	ke,i,y=0,ex=0,gy=scyp,cx,gx;
   int	cmd=0;
