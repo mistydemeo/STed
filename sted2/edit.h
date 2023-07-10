@@ -5,7 +5,6 @@
 #ifndef _EDIT_H_
 #define _EDIT_H_
 
-int channele_no();
 void ed_ch_stgt(int, int, int, int, int);
 
 void trk_ed();

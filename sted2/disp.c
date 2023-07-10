@@ -2,11 +2,14 @@
  * STed: disp.c (input and output subroutine)
  */
 
+#include  "cm6con.h"
 #include  "disp.h"
 #include  "edit.h"
+#include  "edits.h"
 #include  "graphic.h"
 #include  "key_sub.h"
 #include	"sted.h"
+#include  "trkset.h"
 #include  "x68funcs.h"
 
 unsigned char	fnc_dat[9*10][9]={
@@ -48,17 +51,6 @@ unsigned char	fnc_dat[9*10][9]={
   N_("   mf   "),N_("   f    "),N_("   ff   "),N_("  fff   "),N_("        ")};
 
 char	hex_code[16]={'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
-
-int	meas_add();
-int	meas_no();
-void	all_note_off();
-void	trk_cluc();
-int	trk_shift();
-void	trk_delete();
-void	trksize();
-void	trk_no_dis();
-void	poplay();
-void	undobuf();
 
 int isinputmode=0;
 
