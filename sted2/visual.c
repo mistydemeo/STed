@@ -2,7 +2,14 @@
  * STed: visual.c  (controller visal edit)
  */
 
+#include	"disp.h"
+#include	"edit.h"
+#include	"edits.h"
+#include	"graphic.h"
+#include	"mcpy.h"
 #include	"sted.h"
+#include	"track.h"
+#include	"visual.h"
 
 char curv_tbl[192]={
 	  0,  4,  7, 10, 13, 17, 20, 24, 27, 30, 33, 36, 39, 42, 44, 46,
@@ -20,55 +27,6 @@ char curv_tbl[192]={
 
 int	yzm,vmo2,maxdot,excget;
 int	XB,DM;
-
-int	step_cluc2();
-int	add_set();
-int	meas_add();
-int	meas_no();
-void	all_note_off();
-int	trk_ext_sub();
-int	trk_mix_sub();
-void	trk_cluc();
-int	trk_shift();
-void	trk_delete();
-int	size_change();
-void	poplay();
-void	undobuf();
-void	msg();
-void	msg_clr();
-void	key_rep_off();
-void	key_rep_on();
-int	key_shift();
-char	*ctrl_type();
-char	*prog_name();
-
-void	txerase();
-void	txxline();
-void	txyline();
-void	g_print();
-
-int	vinput();
-void	fnc_dis();
-char	*fstr();
-void	sdis();
-void	sdis2();
-void	vdis2();
-void	snsclr();
-
-void	vis_disp();
-int	vis_bufset();
-int	vis_ext();
-int	vis_ext_mix();
-int	vis_a_in();
-int	vis_a_in_co();
-int	vis_a_in_st();
-void	vis_a_out();
-void	vis_wave();
-int	vis_cut();
-int	vis_lnk();
-void	vis_zom();
-void	bunkatsu();
-char    *nstr();
 
 /***************************/
 int	vis_edit(int po,int ln,int ssh)

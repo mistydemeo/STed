@@ -271,4 +271,41 @@ extern char *nkf_conv(char *, char *, char *);
 # define N_(String) (String)
 #endif /* ENABLE_NLS */
 
+int   exe(char *cl);
+
+void  end_proc();
+void  set_errvect();
+void  rst_errvect();
+void  com_sel();
+void  load_sub(int sh);
+void  save_sub(int sh);
+
+void  memo_ed(int sh);
+int   option(int md,int sm);
+int   option2(int md,int sm,int ad,int ew);
+int   paraexe(char *tmp0,int ad,int ew,int sm,int cmd);
+int   progmode(char *tmp2);
+void  key_pause();
+int   yn_sel();
+void  form();
+void  form2();
+void  form3();
+void  sinit();
+void  logo(int y);
+void  trk_dat();
+void  rcp_dat();
+void  rcp_dat2(int n,int m);
+void  beat_set();
+
+char  *mdinport();
+void  dpl(int a);
+void  tpl(int a);
+void  fonload(char *fi);
+void  fonread(unsigned char *buf);
+void  fonset(unsigned char *buf);
+int   option_read(char *env_option);
+
+void  ErrorTrap(void);
+
+
 #endif /* _STED_H_ */

@@ -2,15 +2,16 @@
  * STed: select.c (selecter)
  */
 
+#include  "cm6con.h"
+#include  "disp.h"
+#include  "dos.h"
+#include  "file.h"
+#include  "graphic.h"
+#include  "hprint.h"
+#include  "key_sub.h"
+#include  "mkeyb.h"
+#include  "select.h"
 #include	"sted.h"
-
-typedef struct {
-  char		name[23];
-  unsigned char	far;
-  unsigned int	fln;
-  unsigned int	ftm;
-  unsigned int	fdt;
-} X68_DIR;
 
 static char	*fsel_ext[]={
   "R36:RCP:MID","RCP:R36:MID","CM6","GSD","DEF:DFB","TRK","PRT","TXT","EXC",
@@ -68,78 +69,6 @@ static char	*repl_title[3]={
 int	fsdirp[256],fsdiry[256];/*check*/
 
 int	tkey,tvel;
-
-char	*dtasc();
-char	*tmasc();
-
-void	sinput();
-int	vinput();
-int	inkey2();
-void	spcut();
-char	*sread();
-char	*tim_names();
-char	*fstr();
-char	*hex_s();
-int	yn_sel();
-char	*keystr();
-char	*prog_name();
-char	*spadd();
-void	home2();
-void	msg();
-void	msg_clr();
-void	sdis();
-void	tdis();
-void	tcur();
-void	fnc_dis();
-void	all_note_off();
-void	temporary_set();
-void	timtra();
-void	rhinit();
-int	ctc();
-int	meas_no();
-int	meas_add();
-int	meas_len();
-int	real_cy();
-void	snsclr();
-void	twait();
-void	txerase();
-
-void	path_cut();
-int	str_last();
-int	str_search();
-int	knck();
-char	*jstrupr();
-void	H_PRINT2();
-void	t_scrw();
-void	cons_md();
-void	noed_cls();
-
-void	rcp_dat2();
-void	uex_read();
-
-int	timsel();
-int	timsel2();
-int	varia();
-void	s_test();
-void	m_keyb();
-void	stest_para_disp();
-void	stest_para_edit();
-
-void	fsel();
-void	str_change();
-void	path_cut();
-void	path_down();
-void	frees();
-char	*dirs();
-void	dir_disp();
-int	fdir();
-int	drv_code();
-int	file_check();
-void	file_back();
-int	drvchk();
-int	drvchk2();
-void	memo_disp();
-void	memo_load();
 
 /***************************/
 int	timsel(int bmode,int bank,int gx,int prog)

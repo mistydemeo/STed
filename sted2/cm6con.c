@@ -2,6 +2,10 @@
  * STed: cm6con.c (cm-64 controler)
  */
 
+#include  "cm6con.h"
+#include  "edits.h"
+#include  "file.h"
+#include  "key_sub.h"
 #include	"sted.h"
 
 static unsigned char	cm6_info[64]={
@@ -278,37 +282,6 @@ int	str_search();
 void	OnGraphic();
 void	g_print();
 void	H_PRINT();
-
-void	cm64_con();
-char	*cm6_tone_name();
-char	*tim_names();
-void	card_sel();
-int	sys_mode();
-int	tone_patch();
-void	pat_para_set();
-void	pat_para_dis();
-int	rhy_patch();
-int	user_tone_list();
-int	cm6_tonesel();
-void	pfil();
-void	pch_fld();
-void	keyd();
-void	keyd_inp();
-void	cminit();
-void	cm6_tone_write();
-void	cm6_la_write();
-void	cm6_pcm_write();
-void	cm6_write();
-void	twait();
-void	trns_check();
-void	timtra();
-void	gsd_buf_trns();
-void	tim_buf_trns();
-void	tim_var_read();
-void	all_note_off();
-void	temporary_set();
-
-void	card_name_get();
 
 /***************************/
 void	cm64_con()
@@ -1049,7 +1022,7 @@ void	cm6_pcm_write(int i)
 }
 
 /***************************/
-void	trns_check(int ti)
+void	trns_check(void)
 {
   int	ex,i,ad;
 

@@ -12,7 +12,11 @@
 #include	<string.h>
 
 #include	"iocslib.h"
+#include  "defload.h"
+#include  "disp.h"
 #include	"doslib.h"
+#include  "file.h"
+#include  "key_sub.h"
 #include	"sted.h"
 
 #if	STED
@@ -35,41 +39,6 @@ unsigned char	defrhyno[32][2];
 
 char	def_user_exc_memo[8][25];
 unsigned char	def_user_exc_data[8][24];
-
-void	msg();
-void	msg_clr();
-void	snsclr();
-void	fnc_dis();
-void	spcut();
-char	*spadd();
-char	*jstrupr();
-char	*hex_s();
-char	*fstr();
-char	*tim_names();
-int	str_val();
-int	ctc();
-int	strch();
-int	str_search();
-
-void	tim_name_read();
-
-void	rhinit();
-void	rhinit2();
-void	user_exc_init();
-void	user_exc_init2();
-void	stgt_init();
-void	stgt_init2();
-void	asin_change();
-void	asin_init();
-int	defload();
-int	def_save();
-int	def_bload();
-int	def_bsave();
-void	cnf_stgt();
-void	cnf_rvel();
-void	cnf_repl();
-void	cnf_prog();
-void	def_init();
 
 /* ================================================== file */
 #if	STED

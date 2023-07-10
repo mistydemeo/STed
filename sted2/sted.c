@@ -5,7 +5,21 @@
  * v2.06f 95/04/18 YUI-NETのSYSOP(ゆい工房)さんにソース公開
  */
 
+#include  "assign.h"
+#include  "cm6con.h"
+#include  "defload.h"
+#include  "disp.h"
+#include  "edits.h"
+#include  "exclu.h"
+#include  "file.h"
+#include  "hprint.h"
+#include  "key_sub.h"
+#include  "mcpy.h"
+#include  "ongraph.h"
+#include  "select.h"
 #include	"sted.h"
+#include  "track.h"
+#include  "trkset.h"
 
 
 static char	menu1[18][9]={
@@ -40,121 +54,6 @@ char	env_opt[32][128];
 char	rc_path[256];
 
 int	cmdflagold,used_u=0;
-
-void	rhy_as();
-void	user_exc_as();
-void	part_as();
-void	fsel();
-int	vinput();
-void	sinput();
-void	spcut();
-int	klen();
-int	knck();
-void	str_change();
-int	str_search();
-int	str_last();
-int	str_val();
-
-void	trk_ed();
-void	rtrk_ed();
-void	inpmon();
-char	*mdinport();
-int	real_record();
-int	scale_sel();
-char	*scale_str();
-void	cm64_con();
-void	gsd_con();
-void	cnfinit();
-void	definit();
-int	defload();
-int	timload();
-int	timsave();
-int	gsdload();
-void	timtra();
-int	dload();
-int	dsave();
-int	bufset();
-int	bufload();
-void	dplay();
-void	all_note_off();
-void	cminit();
-void	gsinit();
-void	asin_init();
-void	user_exc_init();
-void	stgt_init();
-void	filt_init();
-void	rec_filter();
-void	dinit();
-void	poplay();
-void	fnc_dis();
-char	*fstr();
-char	*nstr();
-char	*chstr();
-char	strch();
-int	inkey2();
-int	inkey3();
-void	msg();
-void	msg_clr();
-void	vdis();
-void	vdis2();
-void	sdis();
-void	sdis2();
-void	tdis();
-void	home2();
-int	step_cluc2();
-void	edfield();
-void	H_INIT();
-void	OnGraphic();
-void	g_print();
-char	*jstrupr();
-int	drv_code();
-void	key_vect_set();
-void	key_vect_reset();
-void	set_errvect();
-void	rst_errvect();
-void	keyclr();
-
-void	path_cut();
-void	path_set();
-
-int	size_max();
-int	size_change();
-int	size_add();
-void	size_ref();
-
-void	com_sel();
-void	load_sub();
-void	save_sub();
-void	trk_set();
-void	trk_lin();
-void	beat_set();
-void	memo_ed();
-int	option();
-int	option2();
-int	progmode();
-void	key_pause();
-int	yn_sel();
-void	form();
-void	form2();
-void	form3();
-void	sinit();
-void	logo();
-void	rcp_dat();
-void	rcp_dat2();
-void	trk_dat();
-void	trksize();
-void	tpl();
-void	dpl();
-
-void	fonload();
-void	fonread();
-void	fonset();
-int	option_read();
-
-int	exe();
-
-void	end_proc();
-void	ErrorTrap(void);
 
 static char version_id[1024];
 
@@ -867,100 +766,7 @@ int	option(int md,int sm)
 }
 
 /***************************/
-inline int	option22(int md,int sm,int ad,int ew)
-{
-  int	ke,i,y=0,ex=0,gy=scyp,cx,gx;
-  int	cmd=0;
-  char	path2[128],tmp0[128],tmp1[128],tmp2[128];
-
-  if(ew==0){cx=41+16-16;gx=327+128-128;}else{cx=1+16-2;gx=7+128-16;}
-
-  cons_md(0);
-redraw:
-  edit_scr=ew;noed_cls();edit_scr=0;
-
-  box(gx,556,gx+320,1001,14,65535);fill(gx+1,556+17,gx+8,1000,8);
-  sdis(cx,556," OPTION COMMAND",40,15,14);home2(512);
-
-  for(i=0;i<26;i++){
-    tmp0[0]=i+'A';tmp0[1]=32;tmp0[2]=0;strcat(tmp0,chcom_s[i+26][0]);
-    tdis(cx,4+i,tmp0,39,3);}
-
-  if(md>=0){y=md;goto cexec;}
-
-  while( 1){
-  top:
-    md=-1;
-    tdis(cx+2,4+y,chcom_s[y+26][0],37,11);
-    ke=inkey2();
-    tdis(cx+2,4+y,chcom_s[y+26][0],37,3);
-
-    if( ke==27 ){break;}
-    if( ke==0x05 ){y--;if( y<0 ){y=25;}}
-    if( ke==0x18 ){y++;if( y>25 ){y=0;}}
-    if(ke>='a' && ke<='z'){y=ke-'a';ke=13;}
-    if(ke>='A' && ke<='Z'){y=ke-'A';ke=13;}
-
-    /*		if( ke==0x17 || ke==0x13 ){pg-=26;if(pg<0){pg=26;}goto redraw;}
-		if( ke==0x12 || ke==0x04 ){pg+=26;if(pg>26){pg=0;}goto redraw;}
-		*/
-    if( (ke==13 || ke==32)&& chcom_s[y+26][1][0]!=0 ){
-    cexec:
-      tdis(cx+2,4+y,chcom_s[y+26][0],37,9);
-      strcpy(tmp0,chcom_s[y+26][1]);
-      strcpy(tmp2,chcom_c[y+26][0]);
-
-      cmd=progmode(tmp2);
-
-      if((cmd&512)!=0 && sm){
-	msg(_("This function is not available except for Main Menu."));
-	if(md<0){goto top;}
-	break;
-      }
-
-      if((cmd&32)!=0 && chcom_c[y+26][1][0]!=0){
-	tmp1[0]=0;
-	strcpy(path2,rcp_path);
-
-	edit_scr=ew;noed_cls_t();noed_cls();edit_scr=0;
-
-	if(sm==2){fsel(tmp1,path2,y+64+(ew&1)*0x200+26);
-	}else{fsel(tmp1,path2,y+64);}
-	if( es==0 && tmp1[0]!=0 ){
-	  strcat(tmp0," ");
-	  strcat(tmp0,path2);strcat(tmp0,tmp1);
-	}else{tmp0[0]=0;}
-	if(es!=0){goto redraw;}
-
-      }
-      if((cmd&64)!=0){
-	if(rcp_file[0]!=0){
-	  strcpy(tmp1,rcp_file);
-	  if(chcom_c[y+26][1][0]!=0){
-	    strmfe(tmp1,tmp1,chcom_c[y+26][1]);
-	  }
-	  strcat(tmp0," ");
-	  strcat(tmp0,rcp_path);strcat(tmp0,tmp1);
-	}else{tmp0[0]=0;}
-      }
-
-      if(tmp0[0]!=0){
-	edit_scr=ew;noed_cls_t();noed_cls();edit_scr=0;
-	ex=paraexe(tmp0,ad,ew,sm,cmd);break;}
-      else{
-	goto redraw;}
-    }
-  }
-
-  if(ke==27){edit_scr=ew;noed_cls_t();noed_cls();edit_scr=0;}
-
-  cons_md(1);
-  home2(gy);
-  return ex;
-}
-
-/***************************/
-inline int	option2(int md,int sm,int ad,int ew)
+int	option2(int md,int sm,int ad,int ew)
 {
   int	y,ex=0,gy;
   int	cmd=0;

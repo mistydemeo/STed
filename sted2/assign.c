@@ -2,6 +2,14 @@
  * STed: assign.c (assign)
  */
 
+#include  "assign.h"
+#include  "defload.h"
+#include  "disp.h"
+#include  "edits.h"
+#include  "file.h"
+#include  "graphic.h"
+#include  "key_sub.h"
+#include  "select.h"
 #include	"sted.h"
 
 static char	*filter_name[14]={
@@ -39,69 +47,6 @@ TEMPO            :
 
 unsigned char	stgt_name[10][4]={
   "ë¿","ëÀ","ëÁ","ëÂ","ëÃ","ëÄ","ëÅ","ëÆ","ëÇ","ëÉ"};
-
-void	sinput();
-int	vinput();
-int	inkey2();
-char	*fstr();
-int	str_val();
-char	*hex_s();
-int	yn_sel();
-char	*keystr();
-char	*prog_name();
-char	*ctrl_type();
-char	*spadd();
-void	home2();
-void	msg();
-void	msg_clr();
-void	sdis();
-void	tdis();
-void	tcur();
-void	fnc_dis();
-void	rhinit();
-void	rhinit2();
-void	stgt_init();
-void	stgt_init2();
-int	ctc();
-int	spc_code();
-int	meas_no();
-int	meas_add();
-int	meas_len();
-int	real_cy();
-void	snsclr();
-void	twait();
-void	txerase();
-
-int	strch();
-char	*chstr();
-
-int	sttm_no();
-int	sttm_ad();
-int	step_no();
-int	step_ad();
-
-int	ras_save();
-int	ras_load();
-
-void	path_cut();
-int	str_last();
-int	str_search();
-int	knck();
-char	*jstrupr();
-void	cons_md();
-void	noed_cls();
-
-
-int	timsel();
-int	fsel();
-int	varia();
-void	s_test();
-void	asin_init();
-
-int	rhy_as_sel();
-void	rhy_as_para();
-int	part_sel();
-void	filt_init();
 
 /***************************/
 void	rhy_as()

@@ -10,6 +10,7 @@
  */
 
 #include "curses-local.h"
+#include "dos.h"
 #include "sted.h"
 #include "xwin.h"
 

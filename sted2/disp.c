@@ -2,7 +2,12 @@
  * STed: disp.c (input and output subroutine)
  */
 
+#include  "disp.h"
+#include  "edit.h"
+#include  "graphic.h"
+#include  "key_sub.h"
 #include	"sted.h"
+#include  "x68funcs.h"
 
 unsigned char	fnc_dat[9*10][9]={
 
@@ -54,35 +59,6 @@ void	trksize();
 void	trk_no_dis();
 void	poplay();
 void	undobuf();
-
-void	fnc_dis();
-int	vinput();
-void	sinput();
-void	spcut();
-int	inkey2();
-int	knck();
-void	home2();
-char	*fstr();
-char	*hex_s();
-unsigned char	*jstrupr();
-char	*chstr();
-int	str_search();
-int	str_last();
-int	str_val();
-void	g_print();
-void	g_print2();
-void	vdis();
-void	vdis2();
-void	vdis3();
-void	sdis();
-void	sdis2();
-void	sdis3();
-void	tdis();
-void	msg();
-void	msg_clr();
-void	trk_free();
-void	snsclr();
-void	trk_no();
 
 int isinputmode=0;
 

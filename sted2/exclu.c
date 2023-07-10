@@ -2,80 +2,23 @@
  * STed: exclu.c (selecter)
  */
 
+#include  "cm6con.h"
+#include  "disp.h"
+#include  "edit.h"
+#include  "edits.h"
+#include  "exclu.h"
+#include  "defload.h"
+#include  "file.h"
+#include  "graphic.h"
+#include  "scdsp.h"
+#include  "select.h"
 #include	"sted.h"
+#include  "track.h"
 
 static	char	uxcc[5][3]={"gt","ve","ch","cs","ss"};
 static	char	dotp[4][3]={"÷§","÷¨","÷©","÷ª"};
 
 static unsigned char	dotpat[32][32];
-
-void	sinput();
-int	vinput();
-int	inkey2();
-void	spcut();
-char	*sread();
-char	*fstr();
-char	*hex_s();
-int	str_val();
-int	yn_sel();
-char	*spadd();
-int	knck();
-char	*jstrupr();
-void	home2();
-void	msg();
-void	msg_clr();
-void	sdis();
-void	tdis();
-void	tcur();
-void	fnc_dis();
-void	snsclr();
-
-int	trk_check();
-int	trk_shift();
-void	trk_delete();
-
-
-void	all_note_off();
-void	midi_clr();
-
-void	hedset();
-void	thedset();
-int	rcp_buf_put();
-int	rcp_buf_get();
-
-
-
-void	H_PRINT2();
-void	scinst_dsp();
-void	scinst_dsp();
-void	scpanel_dsp();
-
-void	cons_md();
-void	noed_cls();
-int	rex_load();
-int	rex_save();
-void	user_exc_init();
-void	user_exc_init2();
-
-void	user_exc_as();
-void	user_exc_dis();
-void	exc_edit();
-void	exc_dis();
-void	excins();
-void	excdel();
-void	excsum();
-int	exc_rec();
-int	exc_load();
-int	exc_save();
-void	prn_gspanel();
-
-int	dot_ed();
-void	dot_ctrl();
-void	dot_dis();
-void	dattopat();
-void	pattodat();
-
-static void exc_dis2(int ,int );
 
 
 /***************************/
@@ -1204,7 +1147,7 @@ void	dot_dis(int cx)
 }
 
 /***************************/
-void	dattopat(int me)
+void	dattopat(void)
 {
   int	ad=8,i,j,a;
 
@@ -1222,7 +1165,7 @@ void	dattopat(int me)
 }
 
 /***************************/
-void	pattodat(int me)
+void	pattodat(void)
 {
   int	ad=8,i,j,a;
 

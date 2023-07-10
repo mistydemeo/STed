@@ -2,148 +2,122 @@
  * STed: edit.c (edit mainroutine)
  */
 
+#include  "assign.h"
+#include  "cm6con.h"
+#include	"disp.h"
+#include	"edit.h"
+#include	"edits.h"
+#include	"exclu.h"
+#include	"graph.h"
+#include	"graphic.h"
+#include	"hprint.h"
+#include	"key_sub.h"
+#include	"mcpy.h"
+#include	"redit.h"
+#include	"score.h"
+#include	"select.h"
 #include	"sted.h"
+#include	"track.h"
+#include  "trkset.h"
+#include	"visual.h"
+#include	"x68funcs.h"
 
 static char	*inmd[6]={
   "EDIT","EDIT SOUND","EDIT MIDI IN(Mono)","EDIT MIDI IN(Poly)",
   "EDIT MIDI IN(Step)","EDIT MIDI IN(P/St)"};
 
-int	vinput();
-void	sinput();
-void	keyinp();
-void	snsclr();
-void	spcut();
-int	klen();
-int	knck();
-void	fnc_dis();
-void	tcur();
-void	msg();
-void	msg_clr();
-void	timtra();
-int	tagj();
-int	timsel();
-void	help();
-int	vis_edit();
-void	gra();
-void	dat_info();
-void	trksize();
-void	edfield();
-void	home2();
-void	vdis();
-void	vdis2();
-void	sdis();
-void	sdis2();
-void	fsel();
-char	*jstrupr();
-char	*fstr();
-char	*hex_s();
-char	*spadd();
-int	str_val();
-void	midi_clr();
-int	onekey();
-int	polykey();
-int	chord_ten();
-void	all_note_off();
-char	*keystr();
-char	*keystr1();
-char	*keystr2();
-char	*prog_name();
-int	ctc();
+/***************************/
+inline int	option22(int md,int sm,int ad,int ew)
+{
+  int	ke,i,y=0,ex=0,gy=scyp,cx,gx;
+  int	cmd=0;
+  char	path2[128],tmp0[128],tmp1[128],tmp2[128];
 
-int	strch();
-char	*chstr();
+  if(ew==0){cx=41+16-16;gx=327+128-128;}else{cx=1+16-2;gx=7+128-16;}
 
-void	trk_ed();
-void	trk_ed_end();
-void	trk_pos_set();
-void	rtrk_ed();
-void	stgt_as();
-void	part_as();
-void	user_exc_as();
-void	exc_edit();
-void 	sttrc();
-void	replace();
-int	find();
-int	find_rep();
-void	poplay();
-void	partf();
-void	trk_cluc();
-int	step_cluc();
-int	meas_add();
-int	meas_no();
-int	meas_len();
+  cons_md(0);
+redraw:
+  edit_scr=ew;noed_cls();edit_scr=0;
 
-int	sttm_no();
-int	sttm_ad();
-int	step_no();
-int	step_ad();
+  box(gx,556,gx+320,1001,14,65535);fill(gx+1,556+17,gx+8,1000,8);
+  sdis(cx,556," OPTION COMMAND",40,15,14);home2(512);
 
-void	trk_no();
-void	undobuf();
-void	trk_free();
+  for(i=0;i<26;i++){
+    tmp0[0]=i+'A';tmp0[1]=32;tmp0[2]=0;strcat(tmp0,chcom_s[i+26][0]);
+    tdis(cx,4+i,tmp0,39,3);}
 
-int	trk_ext_sub();
-int	trk_mix_sub();
-int	same_meas_conv();
-int	same_meas_extr();
-void	trk_opt_sub();
+  if(md>=0){y=md;goto cexec;}
 
-int	cpybuf_set();
-int	replicate();
-int	ret_midi();
-int	ret_chord();
-int	scale_no();
-int	scale_sel();
-int	prog_no();
-char	*scale_str();
-int	spc_select();
-void	rev_area();
-void	same_shift();
-int	buf_meas();
-void	noed_cls();
-void	tg_copy();
-void	H_PRINT();
+  while( 1){
+  top:
+    md=-1;
+    tdis(cx+2,4+y,chcom_s[y+26][0],37,11);
+    ke=inkey2();
+    tdis(cx+2,4+y,chcom_s[y+26][0],37,3);
 
-int	size_max();
-int	size_change();
-int	size_add();
-void	size_ref();
+    if( ke==27 ){break;}
+    if( ke==0x05 ){y--;if( y<0 ){y=25;}}
+    if( ke==0x18 ){y++;if( y>25 ){y=0;}}
+    if(ke>='a' && ke<='z'){y=ke-'a';ke=13;}
+    if(ke>='A' && ke<='Z'){y=ke-'A';ke=13;}
 
-int	real_po();
-int	real_ad();
-int	real_cy();
-int	trk_check();
-int	trk_shift();
-void	trk_delete();
+    /*		if( ke==0x17 || ke==0x13 ){pg-=26;if(pg<0){pg=26;}goto redraw;}
+		if( ke==0x12 || ke==0x04 ){pg+=26;if(pg>26){pg=0;}goto redraw;}
+		*/
+    if( (ke==13 || ke==32)&& chcom_s[y+26][1][0]!=0 ){
+    cexec:
+      tdis(cx+2,4+y,chcom_s[y+26][0],37,9);
+      strcpy(tmp0,chcom_s[y+26][1]);
+      strcpy(tmp2,chcom_c[y+26][0]);
 
-char	*trk_dis();
-char	*ctrl_type();
-void	cons_md();
-void	val_add();
-void	val_sub();
-void	val_rev();
-void	cur_up();
-void	cur_down();
-void	roll_up();
-void	roll_down();
-void	line_del();
-void	line_ins();
-void	line_ins_aft();
-void	dat_rev();
-void	ret();
-void	spcon();
-int	bank_no();
-int	channele_no();
-void	inmd_disp();
-int	padjust();
-int	spc_code();
-int	bendc2();
-void	bendc();
-void	note_ctrl();
-int	comment_inp();
-void	trk_next();
+      cmd=progmode(tmp2);
 
-static void ed_ch_stgt(int, int, int, int, int);
+      if((cmd&512)!=0 && sm){
+	msg(_("This function is not available except for Main Menu."));
+	if(md<0){goto top;}
+	break;
+      }
+
+      if((cmd&32)!=0 && chcom_c[y+26][1][0]!=0){
+	tmp1[0]=0;
+	strcpy(path2,rcp_path);
+
+	edit_scr=ew;noed_cls_t();noed_cls();edit_scr=0;
+
+	if(sm==2){fsel(tmp1,path2,y+64+(ew&1)*0x200+26);
+	}else{fsel(tmp1,path2,y+64);}
+	if( es==0 && tmp1[0]!=0 ){
+	  strcat(tmp0," ");
+	  strcat(tmp0,path2);strcat(tmp0,tmp1);
+	}else{tmp0[0]=0;}
+	if(es!=0){goto redraw;}
+
+      }
+      if((cmd&64)!=0){
+	if(rcp_file[0]!=0){
+	  strcpy(tmp1,rcp_file);
+	  if(chcom_c[y+26][1][0]!=0){
+	    strmfe(tmp1,tmp1,chcom_c[y+26][1]);
+	  }
+	  strcat(tmp0," ");
+	  strcat(tmp0,rcp_path);strcat(tmp0,tmp1);
+	}else{tmp0[0]=0;}
+      }
+
+      if(tmp0[0]!=0){
+	edit_scr=ew;noed_cls_t();noed_cls();edit_scr=0;
+	ex=paraexe(tmp0,ad,ew,sm,cmd);break;}
+      else{
+	goto redraw;}
+    }
+  }
+
+  if(ke==27){edit_scr=ew;noed_cls_t();noed_cls();edit_scr=0;}
+
+  cons_md(1);
+  home2(gy);
+  return ex;
+}
 
 /***************************/
 void	trk_ed()
@@ -863,7 +837,7 @@ track_edit_top:
       if((sh&1)==0){
 	po=0;cy=0;cx=0;
       }else{
-	note_ctrl(ad);trk_cluc();
+	note_ctrl(ad, 0);trk_cluc();
 	rc=tm_lag-1;
       }
       trk_dis(6,po,24);
@@ -2013,5 +1987,3 @@ trpo:
   SUPER(sta);
   return(tmp1);
 }
-
-/***************************/

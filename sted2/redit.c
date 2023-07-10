@@ -2,7 +2,16 @@
  * STed: redit.c (rhythm track edit)
  */
 
+#include  "assign.h"
+#include  "cm6con.h"
+#include  "disp.h"
+#include  "edits.h"
+#include  "graphic.h"
+#include  "hprint.h"
+#include  "redit.h"
 #include	"sted.h"
+#include  "track.h"
+#include  "trkset.h"
 
 static char	rym[10][3]={"- ","1 ","2 ","3 ","4 ","5 ","6 ","7 ","8 ","9 "};
 static char	rym_s[10][4]={"OFF"," 1 "," 2 "," 3 "," 4 "," 5 "," 6 "," 7 "," 8 "," 9 "};
@@ -17,51 +26,6 @@ static unsigned char	rpar[65][5];
 static 		int	radr[65];
 static char	vlcl[256];
 static int	dfstep=12,barstep,dfvel=9;
-
-void	H_PRINT();
-void	H_PRINT2();
-int	vinput();
-void	sinput();
-void	spcut();
-void	vdis();
-void	sdis();
-void	tcury();
-char	*fstr();
-char	*spadd();
-void	fnc_dis();
-void	msg();
-void	msg_clr();
-void	timtra();
-void	all_note_off();
-int	ctc();
-void	dplay();
-void	cdplay();
-void	cntplay();
-void	trk_free();
-void	snsclr();
-void	twait();
-
-void	rtrk_ed();
-void	rtrk_dis();
-void	rhed_dis();
-void	rsttrc();
-char	*trk_dis();
-void	trk_cluc();
-int	step_cluc();
-int	step_cluc2();
-int	meas_add();
-int	meas_no();
-int	meas_len();
-void	rhy_step();
-void	rtopat();
-void	pattor();
-void	poplay();
-int	trk_check();
-int	trk_shift();
-void	trk_delete();
-void	same_shift();
-
-static void disp_vels( void );
 
 /***************************/
 /* rhythm track edit */

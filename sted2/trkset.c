@@ -2,85 +2,19 @@
  * STed: trkset.c (track set subroutine)
  */
 
+#include  "disp.h"
+#include  "edit.h"
+#include  "edits.h"
+#include  "file.h"
+#include  "graphic.h"
+#include  "key_sub.h"
+#include  "mcpy.h"
+#include  "record.h"
+#include  "select.h"
 #include	"sted.h"
+#include  "track.h"
+#include  "trkset.h"
 
-
-void	fsel();
-int	vinput();
-void	sinput();
-int	inkey2();
-int	inkey3();
-void	snsclr();
-void	spcut();
-void	str_change();
-int	str_search();
-int	str_last();
-int	str_val();
-
-void	trk_ed();
-int	real_record();
-int	trk_load();
-int	trk_save();
-void	option();
-void	option2();
-void	form3();
-void	logo();
-void	dplay();
-void	all_note_off();
-void	poplay();
-void	fnc_dis();
-char	*fstr();
-char	*chstr();
-char	strch();
-void	msg();
-void	msg_clr();
-void	vdis();
-void	vdis2();
-void	sdis();
-void	sdis2();
-void	tdis();
-void	home2();
-int	step_cluc2();
-void	edfield();
-void	g_print();
-void	txerase();
-char	*jstrupr();
-
-int	trk_mix_sub();
-int	trk_ext_sub();
-void	repeat_comp();
-int	repeat_ext();
-int	same_meas_conv();
-int	same_ext_sub();
-int	trk_opt_sub();
-
-int	size_max();
-int	size_change();
-int	size_add();
-void	size_ref();
-
-int	yn_sel();
-void	rcp_dat();
-void	rcp_dat2();
-void	trk_dat();
-void	beat_set();
-
-int	trk_sel();
-void	trk_no_cur();
-void	trk_no_dis();
-void	trk_set();
-void	trmod_set();
-void	trk_lin();
-void	ts_swap();
-void	ts_ins();
-void	ts_sort();
-void	ts_copy();
-void	ts_clear();
-void	ts_mix();
-void	ts_measend();
-void	ts_ext();
-void	trksize();
-void	trksize_c();
 
 static void exetrk_dsp(int);
 

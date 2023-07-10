@@ -2,7 +2,17 @@
 /* real time recording subroutine    */
 /*************************************/
 
+#include "assign.h"
+#include "cm6con.h"
+#include "disp.h"
+#include "edits.h"
+#include "file.h"
+#include "key_sub.h"
+#include "mcpy.h"
+#include "record.h"
 #include "sted.h"
+#include "track.h"
+#include "trkset.h"
 
 unsigned char	*note, *note_data;
 int	trch,lastptr,pt,tr,len,cmd,d_byte;
@@ -10,63 +20,6 @@ int	step,barlen,barunit,stepsum,midi_ch,exc_no,exc_id;
 int	nbuf[16], vbuf[16], gbuf[16];
 
 int	metoro_trk,metoro_sw,topmeas,recmeas,btmmeas,ecount_sw;
-
-void	msg();
-void	msg_clr();
-void	sdis();
-char	*fstr();
-char	*spadd();
-char	*chstr();
-int	strch();
-int	vinput();
-void	home2();
-void	all_note_off();
-void	snsclr();
-void	g_print();
-void	twait();
-void	midi_clr();
-void	rec_filter();
-
-int	last_tempo();
-int	lsp_para_set();
-int	lsp_wait_chack();
-
-void	hedset();
-void	thedset();
-int	rcp_buf_put();
-int	rcp_buf_get();
-
-int	trk_ext_sub();
-int	trk_mix_sub();
-int	size_max();
-int	size_change();
-int	size_add();
-void	size_ref();
-
-void	tai_compres();
-void	trksize();
-
-int	meas_add();
-int	meas_no();
-void	same_cluc();
-int	step_cluc();
-
-int	real_record();
-void	put_delta();
-int	get_delta();
-void	rec_ch_change();
-void	rec_md_change();
-void	rec_mt_change();
-void	rec_sy_change();
-void	rec_meas_change();
-void	rec_ch_disp();
-void	mix_one();
-static void	mix_two();
-int	countstart();
-void	rec_conv();
-int	rec_ext();
-int	meas_adjust();
-int	meas_adj_sub();
 
 /***************************/
 int	real_record()
@@ -478,7 +431,7 @@ void	rec_sy_change()
 }
 
 /***************************/
-void	rec_meas_change(int pm)
+void	rec_meas_change(void)
 {
   int	c;
 

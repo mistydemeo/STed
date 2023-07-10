@@ -2,101 +2,22 @@
  * STed: edits.c (edit subroutine)
  */
 
+#include  "cm6con.h"
+#include  "disp.h"
+#include  "edit.h"
+#include  "edits.h"
+#include  "file.h"
+#include  "graphic.h"
+#include  "key_sub.h"
+#include  "mcpy.h"
+#include  "score.h"
+#include  "select.h"
 #include	"sted.h"
+#include  "track.h"
+#include  "trkset.h"
+#include  "visual.h"
 
 static int	undof[4];
-
-void	H_PRINT();
-void	H_PRINT2();
-int	vinput();
-void	sinput();
-void	spcut();
-void	vdis();
-void	sdis();
-char	*fstr();
-char	*spadd();
-char	*jstrupr();
-int	str_val();
-void	fnc_dis();
-void	msg();
-void	msg_clr();
-void	cons_md();
-void	timtra();
-void	fsel();
-int	part_load();
-int	part_save();
-int	part_text_save();
-void	dclr();
-void	all_note_off();
-int	ctc();
-int	scale_no();
-char	*keystr();
-void	dplay();
-void	cdplay();
-void	cntplay();
-void	trk_free();
-void	trksize();
-void	trk_no();
-void	snsclr();
-int	add_set();
-void	twait();
-int	str_search();
-void	bunkatsu();
-void	txerase();
-
-int	trk_check();
-int	trk_shift();
-void	trk_delete();
-int	same_ext_sub();
-int	same_meas_conv();
-int	size_max();
-int	size_change();
-int	size_add();
-void	size_ref();
-
-void	gra();
-void	gra_c();
-char	*trk_dis();
-
-
-void	poplay();
-void	partf();
-int	replace();
-int	rep_match();
-void	sttrc();
-int	find();
-int	find_rep();
-void	trk_cluc();
-int	buf_meas();
-int	step_cluc();
-int	step_cluc2();
-int	real_ad();
-int	real_po();
-int	real_cy();
-int	step_no();
-int	step_ad();
-int	sttm_no();
-int	sttm_ad();
-int	padjust();
-int	meas_no();
-int	meas_no2();
-int	meas_add();
-int	dat_add();
-int	meas_len();
-void	undobuf();
-void	same_shift();
-int	same_meas_extr();
-int	cpybuf_set();
-void	dat_rev();
-int	replicate();
-void	bendc();
-int	bendc2();
-int	bank_no();
-int	prog_no();
-int	channele_no();
-void	trk_next();
-int	spc_code();
-char	*ctrl_type();
 
 /***************************/
 /*

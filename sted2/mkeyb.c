@@ -4,6 +4,8 @@
  * STed: music keyboard (1994/07/20)
  */
 
+#include  "cm6con.h"
+#include  "disp.h"
 #include	"sted.h"
 
 
@@ -27,9 +29,6 @@ unsigned char	keycode[44]={
 ÷²÷²÷²÷²÷²÷²÷²÷²÷²÷²÷²÷²÷²÷²÷²÷²÷²÷²÷²÷²÷²÷²÷²÷²÷²÷²÷²÷²
   c1     c2     c3     c4     c5     c6     c7     c8
 */
-void	msg();
-void	msg_clr();
-void	snsclr();
 
 /***************************/
 void	m_keyb(int ch,int bank,int prg,int velo)

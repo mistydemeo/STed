@@ -2,30 +2,13 @@
  * STed: track.c (track subroutine)
  */
 
+#include  "disp.h"
+#include  "edits.h"
+#include  "file.h"
+#include  "mcpy.h"
 #include	"sted.h"
-
-void	msg();
-void	msg_clr();
-void	snsclr();
-
-int	trk_mix_sub();
-int	trk_ext_sub();
-int	repeat_comp();
-int	repeat_ext();
-int	same_meas_conv();
-int	same_ext_sub();
-void	trk_opt_sub();
-int	tai_compres();
-void	trk_quan();
-void	note_ctrl();
-
-int	trk_check();
-int	trk_shift();
-void	trk_delete();
-int	size_change();
-int	size_max();
-int	size_add();
-void	size_ref();
+#include  "track.h"
+#include  "visual.h"
 
 /***************************/
 int	trk_mix_sub(unsigned char *in1,unsigned char *in2)

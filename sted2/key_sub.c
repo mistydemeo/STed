@@ -2,7 +2,16 @@
  * STed2.x:key_sub.c midi in & chord & key name
  */
 
+#include  "cm6con.h"
+#include  "disp.h"
+#include  "edit.h"
+#include  "edits.h"
+#include  "key_sub.h"
+#include  "mcpy.h"
+#include  "score.h"
+#include  "select.h"
 #include	"sted.h"
+#include  "track.h"
 
 /* ************** chord list */
 static	char	chord_name[20][9]={
@@ -72,55 +81,6 @@ static char	oct[11]={
   '.','0','1','2','3','4','5','6','7','8','9'};
 
 int	outch,prog;
-
-int	timsel();
-void	msg();
-void	msg_clr();
-void	fnc_dis();
-void	sdis();
-int	varia();
-void	sinput();
-char	*fstr();
-char	*hex_s();
-char	*spadd();
-char	*jstrupr();
-int	str_val();
-int	vinput();
-void	home2();
-void	poplay();
-void	gra();
-void	all_note_off();
-int	trk_shift();
-void	trk_delete();
-void	snsclr();
-void	undobuf();
-void	noed_cls();
-void	g_print();
-void	twait();
-int	strch();
-char	*chstr();
-char	*tim_names();
-
-void	inpmon();
-static void	midi_change();
-static int	midi_inout();
-void	midi_chout();
-int	midi_in();
-void	midi_clr();
-char	*mdinport();
-int	polykey();
-static int	onekey();
-static int	chord_sel();
-static int	chord_ten();
-static int	chord_ins();
-static void	chord_dis();
-int	mml_inp();
-int	scale_no();
-char	*keystr();
-char	*keystr2();
-char	*prog_name();
-int	key_shift();
-void	key_shift_sub();
 
 /***************************/
 void	inpmon()

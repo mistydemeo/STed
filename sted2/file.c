@@ -11,9 +11,19 @@
 #include	"BASIC.h"
 #endif
 
+#include  "cm6con.h"
+#include  "defload.h"
+#include  "disp.h"
+#include  "doslib.h"
+#include  "edit.h"
+#include  "edits.h"
+#include  "file.h"
 #include	"iocslib.h"
-#include	"doslib.h"
+#include  "mcpy.h"
+#include  "ongraph.h"
 #include	"sted.h"
+#include  "track.h"
+#include  "trkset.h"
 
 #include        "rcpconv.h"
 
@@ -32,86 +42,6 @@ static char	ras_id[] ="STedV2.0R_ASS\r\n";			/* 15byte */
 static char     sted_id[] = "STEDDATAx.xxDedicatedToTURBO\r\n"; /* 30bytes */
 
 /*prt rex -> grt gex v2.5g*/
-
-void	msg();
-void	msg_clr();
-void	snsclr();
-void	fnc_dis();
-void	dpl();
-void	tpl();
-void	spcut();
-char	*spadd();
-char	*jstrupr();
-int	str_val();
-int	ctc();
-int	strch();
-int	meas_no();
-int	meas_add();
-int	dat_add();
-int	meas_len();
-int	add_set();
-int	size_change();
-void	trksize_c();
-char	*trk_dis();
-int	str_search();
-
-int	dload();
-int	dsave();
-int	trk_load();
-int	trk_save();
-int	part_load();
-int	part_save();
-int	rex_load();
-int	rex_save();
-int	timsave();
-int	timload();
-int	gsdload();
-
-void	dplay();
-void	cdplay();
-void	cntplay();
-int	last_tempo();
-int	lsp_para_set();
-int	lsp_wait_chack();
-
-void	uex_read();
-void	uex_set();
-
-void	hedset();
-void	thedset();
-void	hedread();
-int	thedread();
-char	*sread();
-void	sset();
-void	tim_buf_trns();
-void	tim_var_read();
-void	tim_name_read();
-void	tim_name_set();
-void	gsd_buf_trns();
-void	gsd_var_read();
-
-int	rcp_buf_put();
-int	rcp_buf_get();
-
-void	dclr();
-void	same_cluc();
-int	gomi_cut();
-void	dinit();
-
-void	all_note_off();
-void	temporary_set();
-
-void	cminit();
-void	gsinit();
-
-void	rhinit();
-void	rhinit2();
-void	user_exc_init();
-void	user_exc_init2();
-void	stgt_init();
-void	stgt_init2();
-void	asin_change();
-void	asin_init();
 
 /* ================================================== file */
 static int smfload( char *fna ) {

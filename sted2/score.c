@@ -2,6 +2,12 @@
  * STed: score.c  (fumen & data draw subroutine)
  */
 
+#include  "disp.h"
+#include  "edits.h"
+#include  "exclu.h"
+#include  "graphic.h"
+#include  "key_sub.h"
+#include  "score.h"
 #include	"sted.h"
 #define NORMAL 1
 
@@ -25,41 +31,6 @@ char	sharp_yp[14]={0*4,3*4,-1*4,2*4,5*4,1*4,4*4 , 4*4,1*4,5*4,2*4,6*4,3*4,7*4};
 
 int	ga_adr[512],ga_xpo[512],ga_co;
 int	gr_adr[512],gr_xpo[512],gr_co;
-
-int	step_cluc2();
-int	add_set();
-int	meas_add();
-int	meas_no();
-int	meas_no2();
-void	all_note_off();
-void	trk_cluc();
-int	trk_shift();
-void	trk_delete();
-void	poplay();
-void	undobuf();
-void	msg();
-void	msg_clr();
-int	key_shift();
-char	*ctrl_type();
-char	*prog_name();
-
-void	g_print();
-
-int	vinput();
-void	fnc_dis();
-char	*fstr();
-char	*chstr();
-void	sdis();
-void	sdis2();
-void	vdis2();
-void	snsclr();
-
-void	gra();
-int	gra_add();
-void	gra_gakufu();
-void	gra_special();
-int	st_cv();
-void	put_sharp();
 
 /***************************/
 void	gra(int po,int sh)
