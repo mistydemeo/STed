@@ -475,7 +475,7 @@ void	noed_cls()
 
 void	noed_cls_t()
 {
-  if(edit_scr!=0){txerase(0,32,454,489-32,0);}else{txerase(313,32,767-313,489-32,0);}
+  if(edit_scr!=0){txerase(0,32,454,489-32);}else{txerase(313,32,767-313,489-32);}
 }
 
 /***************************/
