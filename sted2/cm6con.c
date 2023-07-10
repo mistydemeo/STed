@@ -3,9 +3,14 @@
  */
 
 #include  "cm6con.h"
+#include  "disp.h"
 #include  "edits.h"
 #include  "file.h"
+#include  "graphic.h"
+#include  "hprint.h"
 #include  "key_sub.h"
+#include  "ongraph.h"
+#include  "select.h"
 #include	"sted.h"
 
 static unsigned char	cm6_info[64]={
@@ -249,39 +254,6 @@ char	tone_hed[6]={'A','B','I','R','I','C'};
 
 int	selno,tkey,tvel;
 char	trf[64];
-
-int	timload();
-int	timsave();
-char	*fstr();
-char	*keystr();
-void	fnc_dis();
-int	vinput();
-void	sinput();
-void	key_pause();
-void	logo();
-void	fsel();
-void	dplay();
-int	inkey2();
-int	inkey3();
-void	sinit();
-int	yn_sel();
-void	vdis2();
-void	sdis();
-void	sdis2();
-void	tdis();
-void	dpl();
-void	msg();
-void	msg_clr();
-void	tcur();
-void	txerase();
-void	home2();
-int	ctc();
-void	s_test();
-char	*spadd();
-int	str_search();
-void	OnGraphic();
-void	g_print();
-void	H_PRINT();
 
 /***************************/
 void	cm64_con()
